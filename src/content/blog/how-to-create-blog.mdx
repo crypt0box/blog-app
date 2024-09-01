@@ -34,13 +34,13 @@ Astroを採用した理由はいくつかあるけど、一番大きいのが[Co
 `npm`でも`pnpm`,`yarn`でもなんでもいいのでインストールする。`bun`が使えるかはわからない。
 自分は`pnpm`でやった。
 
-```terminal
+```plaintext
 pnpm create astro@latest
 ```
 
 するといくつか質問されるので答えていく。
 
-```terminal
+```plaintext
 should we create your new project?
 // プロジェクト名を記入
 
@@ -70,7 +70,7 @@ Initialize a new git repository?
 何も難しいことはない。Githubにプロジェクト作成してブランチをプッシュするだけ。
 自分はGithubCLIでやった。
 
-```terminal
+```plaintext
 gh repo create <project-name> --public
 git remote add origin <project-name>
 git push origin head
@@ -80,9 +80,15 @@ git push origin head
 [CloudflarePages](https://www.cloudflare.com/ja-jp/developer-platform/pages/)でアカウントを作っていなかったら作る。
 作ったら「Workers & Pages」をクリックして画面右上の「作成」ボタンを押す。
 
+![pagesの作成を説明する画像](/cfp1.webp)
+
 「Pages」タブに移動して「Gitに接続」を押下。
 
+![gitに接続までを説明する画像](/cfp2.webp)
+
 ブログアプリのリポジトリを選択して「セットアップの開始」を押下。
+
+![セットアップの開始までを説明する画像](/cfp3.webp)
 
 これで終わりです。簡単すぎ。
 
