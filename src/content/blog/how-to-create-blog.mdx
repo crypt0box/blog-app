@@ -1,0 +1,100 @@
+---
+title: 'ブログが5分でデプロイできる時代になっていた'
+description: 'Here is a sample of some basic Markdown syntax that can be used when writing Markdown content in Astro.'
+pubDate: 'Sep 01 2024'
+heroImage: '/blog-placeholder-1.jpg'
+---
+
+## 🎉 ブログを作った
+[CAREER SKILLS ソフトウェア開発者の完全キャリアガイド](https://amzn.asia/d/1stmAJu)という本を読んでブログを作ることにした。
+ってコトでできたのがこのブログなのだが5分くらい作れてしまった。
+せっかくなのでこのブログの技術構成とか構築した方法を記念すべき第一稿として書いてみようと思う。
+
+## 👓 採用技術
+- [Astro](https://astro.build/)
+- [CloudflarePages](https://www.cloudflare.com/ja-jp/developer-platform/pages/)
+
+Astroを採用した理由はいくつかあるけど、一番大きいのが[Content Collections](https://docs.astro.build/en/guides/content-collections/)という機能がある点。要はアプリ内でmarkdownを書いてそれをそのまま記事として配信できる機能なんだけど、このブログが一瞬でできたのはコレのおかげ。他にも静的サイトだからSSGしたかったのと単純に使ったことのない技術で触ってみたかったので選んだ。個人開発（といっていいのかわからんけど）はモチベーション駆動で技術選定できるから楽しすぎる。CloudflarePagesは手軽さ&安さで選んだ。というのは建前でぶっちゃけあっさい調査しかしてなくてネットの情報見るに「なんかイケてね？」感があったので選びました。これから使ってみて感想を記事にしてみたい。まだ使って数日のニワカの感想でいいなら「楽すぎて最高です」になります。
+
+## ✏️ 前提
+- Node.jsが動く環境であること
+
+## 😉 作成とデプロイ
+5分で作れるので超シンプル。大まかな流れは以下。
+
+1. Astroをインストール
+2. Githubにpush
+3. CloudflarePagesと連携
+
+以上です。とても楽です。
+細かく見ていきます。
+
+### 🛸 Astroをインストール
+
+`npm`でも`pnpm`,`yarn`でもなんでもいいのでインストールする。`bun`が使えるかはわからない。
+自分は`pnpm`でやった。
+
+```terminal
+pnpm create astro@latest
+```
+
+するといくつか質問されるので答えていく。
+
+```terminal
+should we create your new project?
+// プロジェクト名を記入
+
+How would you like to start your new project?
+// プロジェクトのテンプレートを選択
+
+Do you plan to write TypeScript?
+// TypeScriptを使うか
+
+How strict should TypeScript be?
+// TypeScriptの厳密さを選択
+
+Install dependencies?
+// 依存関係をインストールするか
+
+Initialize a new git repository?
+// gitを初期化するか
+```
+
+ポイントとしては`How would you like to start your new project?`で`Use blog template`を選択すること。
+これをするとContent Collectionsがセットアップされた状態のプロジェクトが作成される。
+
+質問に答え終わると自動でプロジェクトが作成されるので`cd <project-name>`して`pnpm dev`するとローカルでアプリケーションが立ち上がる。
+これでブログのひな型はできているのであとは自分の好きなようにカスタムすればOK。
+
+### 🐙 Githubにpush
+何も難しいことはない。Githubにプロジェクト作成してブランチをプッシュするだけ。
+自分はGithubCLIでやった。
+
+```terminal
+gh repo create <project-name> --public
+git remote add origin <project-name>
+git push origin head
+```
+
+### ⛅ CloudflarePagesと連携
+[CloudflarePages](https://www.cloudflare.com/ja-jp/developer-platform/pages/)でアカウントを作っていなかったら作る。
+作ったら「Workers & Pages」をクリックして画面右上の「作成」ボタンを押す。
+
+「Pages」タブに移動して「Gitに接続」を押下。
+
+ブログアプリのリポジトリを選択して「セットアップの開始」を押下。
+
+これで終わりです。簡単すぎ。
+
+## 🏃 これから
+てなワケでとっても簡単にブログが作れました。
+ただAstroのテンプレートを使っただけなので個性のないUIだし、もっと遊びのあるデザインにしていきたいです。
+そのほかにもmarkdownにformatを効かせたり、SEO頑張ってみたり、画像の配信をどうするか考えてみたりとやりたいことは山積みです。
+せっかく作ったし何事も「続ける」ことが一番大事だと思うので、ひたむきに運営していきたい！
+いずれは知る人ぞ知る、というか読んだ人に小さくても影響を与えられるようなサイトにしていきたい、という野望を語って今回は締めます。
+ではでは、ここまで読んできただきありがとうございました👋
+
+
+
+
+
