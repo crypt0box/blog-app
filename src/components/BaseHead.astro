@@ -1,17 +1,24 @@
 ---
 // Import the global.css file here so that it is included on
 // all pages through the use of the <BaseHead /> component.
+import { SEO } from "astro-seo";
 import "../styles/global.css";
 
 interface Props {
 	title: string;
 	description: string;
 	image?: string;
+	slug: string;
 }
 
 const canonicalURL = new URL(Astro.url.pathname, Astro.site);
 
-const { title, description, image = "/blog-placeholder-1.jpg" } = Astro.props;
+const {
+	title,
+	description,
+	image = "/blog-placeholder-1.jpg",
+	slug,
+} = Astro.props;
 ---
 
 <!-- Global Metadata -->
@@ -45,3 +52,18 @@ const { title, description, image = "/blog-placeholder-1.jpg" } = Astro.props;
 <meta property="twitter:title" content={title} />
 <meta property="twitter:description" content={description} />
 <meta property="twitter:image" content={new URL(image, Astro.url)} />
+
+<!--SEO-->
+<SEO
+	charset="UTF-8"
+	openGraph={{
+		basic: {
+			title,
+			type: "article",
+			image: new URL(`/og/${slug}.png`, Astro.url.origin).toString(),
+		},
+		image: {
+			alt: title,
+		},
+	}}
+/>
