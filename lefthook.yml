@@ -6,7 +6,7 @@
 pre-commit:
   commands:
     lint:
-      run: pnpm lint
+      run: pnpm format
 pre-push:
   commands:
     check:

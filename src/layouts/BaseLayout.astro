@@ -1,0 +1,26 @@
+---
+import BaseHead from "../components/BaseHead.astro";
+import Footer from "../components/Footer.astro";
+---
+
+<html lang="ja">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <BaseHead title="aaa" />
+  </head>
+  <header>
+    <nav>
+      <a href="#">ホーム</a>
+      <a href="#">ブログ</a>
+
+      <a href="#">お問い合わせ</a>
+    </nav>
+  </header>
+  <body>
+    <article>
+      <slot />
+    </article>
+    <Footer />
+  </body>
+</html>
