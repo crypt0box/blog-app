@@ -7,4 +7,7 @@ pre-commit:
   commands:
     lint:
       run: pnpm lint
-
+pre-push:
+  commands:
+    check:
+      run: pnpm astro check

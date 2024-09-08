@@ -2,8 +2,10 @@ import { readFileSync } from "node:fs";
 import satori from "satori";
 import sharp from "sharp";
 
+const path = import.meta.env.MODE === "production" ? "" : "public/";
+
 const imgBase64 = readFileSync(
-	new URL("../../public/og-image-background.png", import.meta.url),
+	new URL(`../../${path}og-image-background.png`, import.meta.url),
 	{ encoding: "base64" },
 );
 const imgDataUrl = `data:image/png;base64,${imgBase64}`;
