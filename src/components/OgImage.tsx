@@ -1,25 +1,33 @@
+import { readFileSync } from "node:fs";
 import satori from "satori";
 import sharp from "sharp";
+
+const imgBase64 = readFileSync(
+	new URL("../../public/og-image-background.png", import.meta.url),
+	{ encoding: "base64" },
+);
+const imgDataUrl = `data:image/png;base64,${imgBase64}`;
 
 export async function getOgImage(text: string) {
 	const fontData = (await getFontData()) as ArrayBuffer;
 	const svg = await satori(
-		<main
-			style={{
-				height: "100%",
-				width: "100%",
-				backgroundColor: "#444",
-				color: "#fff",
-				padding: "10px",
-			}}
-		>
-			<section>
-				<h1 style={{ fontSize: "40px" }}>{text}</h1>
-			</section>
+		<main style={{ position: "relative" }}>
+			<img src={imgDataUrl} alt="og-image" />
+			<h1
+				style={{
+					maxWidth: "1040px",
+					fontSize: "48px",
+					position: "absolute",
+					top: "80px",
+					left: "80px",
+				}}
+			>
+				{text}
+			</h1>
 		</main>,
 		{
-			width: 800,
-			height: 400,
+			width: 1200,
+			height: 630,
 			fonts: [
 				{
 					name: "Noto Sans JP",
