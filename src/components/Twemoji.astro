@@ -1,0 +1,22 @@
+---
+import { parse } from "@twemoji/parser";
+
+interface Props {
+  class?: astroHTML.JSX.ImgHTMLAttributes["class"];
+  emoji: string;
+  size?: string;
+}
+
+const { class: className, emoji, size } = Astro.props;
+const [entity] = parse(emoji);
+---
+
+<img
+  class={`inline-block ${className || ""}`}
+  width={size || "16px"}
+  height={size || "16px"}
+  src={entity.url}
+  alt={entity.text}
+  decoding="async"
+  loading="lazy"
+/>
