@@ -2,9 +2,9 @@
 const today = new Date();
 ---
 
-<footer>
+<footer class="p-4 z-10 bg-slate-100 rounded-t-xl" {...Astro.props}>
   &copy; {today.getFullYear()} crypyobox. All rights reserved.
-  <div class="social-links">
+  <!--<div class="social-links">
     <a href="https://x.com/cryptooooon" target="_blank">
       <svg
         viewBox="0 0 16 16"
@@ -31,26 +31,5 @@ const today = new Date();
         ></path></svg
       >
     </a>
-  </div>
+  </div>-->
 </footer>
-<style>
-  footer {
-    padding: 2em 1em 6em 1em;
-    background: linear-gradient(var(--gray-gradient)) no-repeat;
-    color: rgb(var(--gray));
-    text-align: center;
-  }
-  .social-links {
-    display: flex;
-    justify-content: center;
-    gap: 1em;
-    margin-top: 1em;
-  }
-  .social-links a {
-    text-decoration: none;
-    color: rgb(var(--gray));
-  }
-  .social-links a:hover {
-    color: rgb(var(--gray-dark));
-  }
-</style>
