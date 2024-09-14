@@ -3,7 +3,9 @@ import { getCollection } from "astro:content";
 import BaseHead from "../components/BaseHead.astro";
 import Footer from "../components/Footer.astro";
 import BaseLayout from "../layouts/BaseLayout.astro";
-import Twemoji from "../components/twemoji.astro";
+import Twemoji from "../components/Twemoji.astro";
+import { format } from "date-fns";
+import EmojiLabel from "../components/EmojiLabel.astro";
 const posts = (await getCollection("blog")).sort(
   (a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf(),
 );
@@ -13,11 +15,42 @@ const posts = (await getCollection("blog")).sort(
   <div class="flex flex-col gap-4 my-60">
     {
       posts.map((post) => (
-        <div class="w-full h-48 p-6 rounded-xl bg-slate-100">
-          <h2 class="text-2xl font-bold">
-            {post.data.title}
-            <Twemoji emoji="👋" />
-          </h2>
+        <div class="w-full min-h-48 p-6 rounded-xl bg-slate-100">
+          <div class="grid grid-cols-[auto_240px]">
+            <div>
+              <h2 class="text-2xl font-bold">
+                {post.data.title}
+                <Twemoji emoji="👋" />
+              </h2>
+              <div class="flex gap-4 mt-2">
+                <EmojiLabel emoji="📅">
+                  {format(post.data.pubDate, "yyyy-MM-dd")}
+                </EmojiLabel>
+                <EmojiLabel emoji="🔖">
+                  <div class="flex gap-1">
+                    {post.data.tags.map((tag, index) => (
+                      <>
+                        <a
+                          class="rounded-md px-1 hover:bg-slate-300"
+                          href={tag}
+                        >
+                          {tag}
+                        </a>
+                        {index !== post.data.tags.length - 1 && <span>/</span>}
+                      </>
+                    ))}
+                  </div>
+                </EmojiLabel>
+              </div>
+              <div class="mt-2 h-12 overflow-y-hidden">
+                <p class="text-slate-700">{post.data.description}</p>
+              </div>
+              <div class="mt-2">
+                <p class="text-slate-500 font-bold">{post.body.length} words</p>
+              </div>
+            </div>
+            <div class="w-full h-full bg-slate-200">aaa</div>
+          </div>
         </div>
       ))
     }
