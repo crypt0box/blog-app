@@ -16,12 +16,15 @@ const posts = (await getCollection("blog")).sort(
     {
       posts.map((post) => (
         <div class="w-full min-h-48 p-6 rounded-xl bg-slate-100">
-          <div class="grid grid-cols-[auto_240px]">
+          <div class="sm:grid sm:grid-cols-[auto_240px] gap-2">
             <div>
-              <h2 class="text-2xl font-bold">
-                {post.data.title}
-                <Twemoji emoji="👋" />
-              </h2>
+              <a
+                href={`blog/${post.slug}`}
+                class="sm:hidden flex justify-center items-center w-full h-full p-4 bg-slate-200 rounded-md"
+              >
+                <Twemoji class="w-16 h-16" emoji={post.data.heroImage} />
+              </a>
+              <h2 class="text-2xl font-bold mt-2 sm:mt-0">{post.data.title}</h2>
               <div class="flex gap-4 mt-2">
                 <EmojiLabel emoji="📅">
                   {format(post.data.pubDate, "yyyy-MM-dd")}
@@ -31,7 +34,7 @@ const posts = (await getCollection("blog")).sort(
                     {post.data.tags.map((tag, index) => (
                       <>
                         <a
-                          class="rounded-md px-1 hover:bg-slate-300"
+                          class="rounded-md px-1 hover:bg-slate-300 "
                           href={tag}
                         >
                           {tag}
@@ -49,7 +52,12 @@ const posts = (await getCollection("blog")).sort(
                 <p class="text-slate-500 font-bold">{post.body.length} words</p>
               </div>
             </div>
-            <div class="w-full h-full bg-slate-200">aaa</div>
+            <a
+              href={`blog/${post.slug}`}
+              class="hidden sm:flex justify-center items-center w-full h-full bg-slate-200 rounded-md"
+            >
+              <Twemoji class="w-16 h-16" emoji={post.data.heroImage} />
+            </a>
           </div>
         </div>
       ))
