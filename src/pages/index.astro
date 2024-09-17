@@ -25,7 +25,9 @@ const posts = (await getCollection("blog")).sort(
               >
                 <Twemoji class="w-16 h-16" emoji={post.data.heroImage} />
               </a>
-              <h2 class="text-2xl font-bold mt-2 sm:mt-0">{post.data.title}</h2>
+              <h2 class="text-2xl font-bold mt-2 sm:mt-0 hover:text-slate-500">
+                <a href={`blog/${post.slug}`}>{post.data.title}</a>
+              </h2>
               <div class="flex gap-4 mt-2">
                 <EmojiLabel emoji="📅">
                   {format(post.data.pubDate, "yyyy-MM-dd")}
