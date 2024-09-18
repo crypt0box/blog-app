@@ -1,6 +1,15 @@
+---
+const { class: className, ...rest } = Astro.props;
+---
+
 <section
-  class="sm:hidden flex items-center flex-col gap-3 w-full p-6 rounded-xl bg-slate-100"
+  class:list={[
+    className,
+    "items-center flex-col gap-3 w-full p-6 rounded-xl bg-slate-100",
+  ]}
+  {...rest}
 >
+  <!--class="sm:hidden flex" >-->
   <img
     class="rounded-full"
     width="160px"
