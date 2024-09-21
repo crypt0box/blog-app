@@ -3,6 +3,7 @@ import BaseHead from "../components/BaseHead.astro";
 import Footer from "../components/Footer.astro";
 import LinkButton from "../components/LinkButton.astro";
 import { Icon } from "astro-icon/components";
+import { profileConfig } from "../config";
 ---
 
 <html lang="ja">
@@ -36,15 +37,22 @@ import { Icon } from "astro-icon/components";
           </li>
         </ul>
       </nav>
-      <div class="absolute right-6 top-2">
-        <ul class="flex gap-6">
-          <li>
-            <a class="block p-2 rounded-full hover:bg-slate-200" href="aaa"
-              ><Icon name="zenn-logo" size="24" /></a
-            >
-          </li>
-          <li><Icon name="zenn-logo" size="24" /></li>
-          <li><Icon name="zenn-logo" size="24" /></li>
+      <div class="hidden sm:block absolute right-6 top-2">
+        <ul class="flex gap-2">
+          {
+            profileConfig.links.map((link) => (
+              <li>
+                <a
+                  class="block p-2 rounded-full hover:bg-slate-300"
+                  href={link.to}
+                  target="_blank"
+                  rel="noreferrer noopener"
+                >
+                  <Icon name={link.icon} size="24" />
+                </a>
+              </li>
+            ))
+          }
         </ul>
       </div>
     </header>
