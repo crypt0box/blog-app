@@ -1,3 +1,38 @@
+export const siteConfig = {
+  menu: [
+    {
+      name: "HOME",
+      to: "/",
+      isExternal: false,
+    },
+    {
+      name: "ABOUT",
+      to: "/about",
+      isExternal: false,
+    },
+    {
+      name: "CONTACT",
+      to: "/about",
+      isExternal: true,
+    },
+    {
+      name: "X",
+      to: "https://x.com/cryptooooon",
+      isExternal: true,
+    },
+    {
+      name: "Zenn",
+      to: "https://zenn.dev/cryptobox",
+      isExternal: true,
+    },
+    {
+      name: "Github",
+      to: "https://github.com/crypt0box",
+      isExternal: true,
+    },
+  ],
+} as const;
+
 export const profileConfig = {
   links: [
     {

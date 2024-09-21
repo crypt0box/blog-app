@@ -4,6 +4,7 @@ import Footer from "../components/Footer.astro";
 import LinkButton from "../components/LinkButton.astro";
 import { Icon } from "astro-icon/components";
 import { profileConfig } from "../config";
+import { MobileNav } from "../components/MobileNav";
 ---
 
 <html lang="ja">
@@ -22,7 +23,7 @@ import { profileConfig } from "../config";
       decoding="async"
       loading="lazy"
     />
-    <header class="relative min-h-14 bg-slate-100 rounded-b-xl p-4 z-10">
+    <header class="relative min-h-14 bg-slate-100 rounded-b-xl p-4 z-20">
       <h1 class="absolute font-bold">Cryptobox Tech Blog</h1>
       <nav class="hidden sm:flex sm:justify-center">
         <ul class="flex gap-4">
@@ -37,6 +38,7 @@ import { profileConfig } from "../config";
           </li>
         </ul>
       </nav>
+      <MobileNav client:only="react" />
       <div class="hidden sm:block absolute right-6 top-2">
         <ul class="flex gap-2">
           {
