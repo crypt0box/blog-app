@@ -13,8 +13,8 @@ const { title, pubDate, updatedDate, heroImage, slug } = Astro.props;
 ---
 
 <html lang="ja">
-  <head>
-    <!--<BaseHead title={title}  slug={slug}/>-->
+  <!--<head>
+    <BaseHead title={title}  slug={slug}/>
     <style>
       main {
         width: calc(100% - 2em);
@@ -54,38 +54,30 @@ const { title, pubDate, updatedDate, heroImage, slug } = Astro.props;
         font-style: italic;
       }
     </style>
-  </head>
+  </head>-->
 
   <body>
-    <Header />
-    <main>
-      <article>
-        <div class="hero-image">
-          {
-            heroImage && (
-              <img width={1020} height={510} src={heroImage} alt="" />
-            )
-          }
-        </div>
-        <div class="prose">
-          <div class="title">
-            <div class="date">
-              <FormattedDate date={pubDate} />
-              {
-                updatedDate && (
-                  <div class="last-updated-on">
-                    Last updated on <FormattedDate date={updatedDate} />
-                  </div>
-                )
-              }
-            </div>
-            <h1>{title}</h1>
-            <hr />
+    <article>
+      <!--<div class="hero-image">
+        {heroImage && <img width={1020} height={510} src={heroImage} alt="" />}
+      </div>-->
+      <div class="prose">
+        <div class="title">
+          <div class="date">
+            <FormattedDate date={pubDate} />
+            {
+              updatedDate && (
+                <div class="last-updated-on">
+                  Last updated on <FormattedDate date={updatedDate} />
+                </div>
+              )
+            }
           </div>
-          <slot />
+          <h1>{title}</h1>
+          <hr />
         </div>
-      </article>
-    </main>
-    <Footer />
+        <slot />
+      </div>
+    </article>
   </body>
 </html>
