@@ -12,6 +12,16 @@ const { title, slug } = Astro.props;
 <!--SEO-->
 <SEO
   charset="UTF-8"
+  title="Cryptobox Tech Blog"
+  description="Cryptoboxの技術ブログ。主にフロントエンド周辺技術を取り扱います。"
+  extend={{
+    link: [
+      {
+        rel: "icon",
+        href: "https://cdn.jsdelivr.net/gh/jdecked/twemoji@latest/assets/svg/1f4e6.svg",
+      },
+    ],
+  }}
   openGraph={{
     basic: {
       title,
