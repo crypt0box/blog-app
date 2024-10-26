@@ -6,7 +6,7 @@ interface Props {
   slug?: string;
 }
 
-const { title, slug } = Astro.props;
+const { title, slug = "og-image-background" } = Astro.props;
 ---
 
 <!--SEO-->

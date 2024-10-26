@@ -5,13 +5,20 @@ import LinkButton from "../components/LinkButton.astro";
 import { Icon } from "astro-icon/components";
 import { profileConfig } from "../config";
 import { MobileNav } from "../components/MobileNav";
+
+type Props = {
+  title: string;
+  slug?: string;
+};
+const title = Astro.props.title;
+const slug = Astro.props?.slug;
 ---
 
 <html lang="ja">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <BaseHead title="aaa" />
+    <BaseHead title={title} slug={slug} />
   </head>
   <div
     class="grid grid-rows-[auto_1fr_auto] grid-cols-[100%] mx-auto px-4 max-w-[1200px] min-h-screen bg-slate-200"
