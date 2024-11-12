@@ -16,7 +16,7 @@ const posts = (await getCollection("blog")).sort(
 
 <BaseLayout title="Cryptobox Tech Blog">
   <div class="sm:grid sm:grid-cols-[70%_1fr] sm:gap-4 my-4">
-    <div class="flex flex-col gap-4">
+    <div class="flex flex-col gap-4 mx-4 sm:mx-auto">
       {
         posts.map((post) => (
           <article class="w-full min-h-48 p-6 rounded-xl bg-slate-100">
