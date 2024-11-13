@@ -1,18 +1,26 @@
 ---
 import { getCollection } from "astro:content";
-import BaseHead from "../components/BaseHead.astro";
-import Footer from "../components/Footer.astro";
-import BaseLayout from "../layouts/BaseLayout.astro";
-import Twemoji from "../components/Twemoji.astro";
+import "../../styles/global.css";
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import Twemoji from "../../components/Twemoji.astro";
+import EmojiLabel from "../../components/EmojiLabel.astro";
+import Tags from "../../components/Tags.astro";
+import Profile from "../../components/Profile.astro";
 import { format } from "date-fns";
-import EmojiLabel from "../components/EmojiLabel.astro";
-import Profile from "../components/Profile.astro";
-import Tags from "../components/Tags.astro";
-import "../styles/global.css";
-const posts = (await getCollection("blog")).sort(
-  (a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf(),
-);
-const uniqueTags = [...new Set(posts.map((post) => post.data.tags).flat())];
+
+export async function getStaticPaths() {
+  const posts = await getCollection("blog");
+  const uniqueTags = [...new Set(posts.map((post) => post.data.tags).flat())];
+
+  return uniqueTags.map((tag) => {
+    const filteredPosts = posts.filter((post) => post.data.tags.includes(tag));
+    return {
+      params: { tag },
+      props: { posts: filteredPosts, tags: uniqueTags },
+    };
+  });
+}
+const { posts, tags } = Astro.props;
 ---
 
 <BaseLayout title="Cryptobox Tech Blog">
@@ -44,7 +52,7 @@ const uniqueTags = [...new Set(posts.map((post) => post.data.tags).flat())];
                         <>
                           <a
                             class="rounded-md px-1 hover:bg-slate-300 "
-                            href={`tags/${tag}`}
+                            href={tag}
                           >
                             {tag}
                           </a>
@@ -76,12 +84,12 @@ const uniqueTags = [...new Set(posts.map((post) => post.data.tags).flat())];
           </article>
         ))
       }
-      <Tags class="sm:hidden flex" tags={uniqueTags} />
+      <Tags class="sm:hidden flex" tags={tags} />
       <Profile class="sm:hidden flex" />
     </div>
     <div>
       <Profile class="hidden sm:flex" />
-      <Tags class="hidden sm:flex mt-4" tags={uniqueTags} />
+      <Tags class="hidden sm:flex mt-4" tags={tags} />
     </div>
   </div>
 </BaseLayout>

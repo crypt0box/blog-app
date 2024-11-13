@@ -3,9 +3,9 @@ import type { HTMLAttributes } from "astro/types";
 import type { CollectionEntry } from "astro:content";
 
 interface Props extends HTMLAttributes<"section"> {
-  posts: CollectionEntry<"blog">[];
+  tags: CollectionEntry<"blog">["data"]["tags"];
 }
-const { class: className, posts, ...rest } = Astro.props;
+const { class: className, tags, ...rest } = Astro.props;
 ---
 
 <section
@@ -17,18 +17,16 @@ const { class: className, posts, ...rest } = Astro.props;
   </h2>
   <ul class="flex gap-2">
     {
-      Array.from(new Set(posts.flatMap((post) => post.data.tags))).map(
-        (tag) => (
-          <li>
-            <a
-              class="rounded-md p-1 px-2 text-slate-500 font-bold hover:bg-slate-300 "
-              href={tag}
-            >
-              {tag}
-            </a>
-          </li>
-        ),
-      )
+      tags.map((tag) => (
+        <li>
+          <a
+            class="rounded-md p-1 px-2 text-slate-500 font-bold hover:bg-slate-300 "
+            href={`/tags/${tag}`}
+          >
+            {tag}
+          </a>
+        </li>
+      ))
     }
   </ul>
 </section>
