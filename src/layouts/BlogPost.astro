@@ -1,6 +1,9 @@
 ---
 import type { CollectionEntry } from "astro:content";
 import FormattedDate from "../components/FormattedDate.astro";
+import { format } from "date-fns";
+import EmojiLabel from "../components/EmojiLabel.astro";
+import Twemoji from "../components/Twemoji.astro";
 
 type Props = CollectionEntry<"blog">["data"] & {
   slug: CollectionEntry<"blog">["slug"];
@@ -20,7 +23,7 @@ const { title, pubDate, updatedDate, heroImage, slug } = Astro.props;
       <div class="bg-white p-6 rounded-md">
         <div class="title">
           <div class="date">
-            <FormattedDate date={pubDate} />
+            {format(pubDate, "yyyy/MM/dd")}
             {
               updatedDate && (
                 <div class="last-updated-on">
@@ -30,6 +33,11 @@ const { title, pubDate, updatedDate, heroImage, slug } = Astro.props;
             }
           </div>
           <h1>{title}</h1>
+          <div
+            class="flex justify-center items-center mx-auto p-10 bg-slate-200"
+          >
+            <Twemoji class="w-20 h-20" emoji={heroImage} />
+          </div>
           <hr />
         </div>
         <slot />
