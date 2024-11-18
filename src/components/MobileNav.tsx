@@ -39,11 +39,13 @@ export const MobileNav = () => {
           onClick={(e) => e.stopPropagation()}
         >
           <ul>
-            {siteConfig.menu.map((item) => (
-              <li className="text-slate-500 font-bold py-1">
+            {siteConfig.menu.map((item, index) => (
+              <li
+                className={`text-slate-500 font-bold  ${index < siteConfig.menu.length - 1 && "border-b border-slate-300"}`}
+              >
                 {item.isExternal ? (
                   <a
-                    className="flex gap-1 w-full"
+                    className="flex items-center gap-1 w-full py-2 ml-1"
                     href={item.to}
                     target="_blank"
                     rel="noopener noreferrer"
@@ -53,14 +55,14 @@ export const MobileNav = () => {
                       className="fill-slate-400"
                       xmlns="http://www.w3.org/2000/svg"
                       viewBox="0 0 24 24"
-                      width="24px"
-                      height="24px"
+                      width="20px"
+                      height="20px"
                     >
                       <path d="M 5 3 C 3.9069372 3 3 3.9069372 3 5 L 3 19 C 3 20.093063 3.9069372 21 5 21 L 19 21 C 20.093063 21 21 20.093063 21 19 L 21 12 L 19 12 L 19 19 L 5 19 L 5 5 L 12 5 L 12 3 L 5 3 z M 14 3 L 14 5 L 17.585938 5 L 8.2929688 14.292969 L 9.7070312 15.707031 L 19 6.4140625 L 19 10 L 21 10 L 21 3 L 14 3 z" />
                     </svg>
                   </a>
                 ) : (
-                  <a className="block w-full" href={item.to}>
+                  <a className="block w-full py-2 ml-1" href={item.to}>
                     {item.name}
                   </a>
                 )}
