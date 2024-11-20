@@ -4,6 +4,7 @@ import FormattedDate from "../components/FormattedDate.astro";
 import { format } from "date-fns";
 import EmojiLabel from "../components/EmojiLabel.astro";
 import Twemoji from "../components/Twemoji.astro";
+import LinkButton from "../components/LinkButton.astro";
 
 type Props = CollectionEntry<"blog">["data"] & {
   slug: CollectionEntry<"blog">["slug"];
@@ -17,10 +18,14 @@ const { title, pubDate, updatedDate, heroImage, slug } = Astro.props;
     <article
       class="prose prose-lg bg-slate-100 my-4 max-w-full sm:p-6 sm:rounded-md"
     >
-      <!--<div class="hero-image">
-        {heroImage && <img width={1020} height={510} src={heroImage} alt="" />}
-      </div>-->
       <div class="bg-white p-6 rounded-md">
+        <a
+          class="flex items-center gap-2 no-underline text-slate-700 hover:text-slate-500"
+          href="/"
+          ><Twemoji class="m-0 w-6 h-6" emoji="👈" /><p class="m-0">
+            Back To HOME
+          </p></a
+        >
         <div class="title">
           <div class="date">
             {format(pubDate, "yyyy/MM/dd")}
