@@ -1,12 +1,15 @@
 ---
 type Props = {
   to: string;
+  isExternal?: boolean;
 };
 
-const { to } = Astro.props;
+const { to, isExternal = false } = Astro.props;
 ---
 
 <a
   class="w-full px-4 py-2 rounded-md text-center font-bold hover:bg-slate-300 hover:text-slate-500"
-  href={to}><slot /></a
+  href={to}
+  target={isExternal ? "_blank" : ""}
+  rel={isExternal ? "noreferer" : ""}><slot /></a
 >

@@ -12,7 +12,7 @@ export const siteConfig = {
     },
     {
       name: "CONTACT",
-      to: "/about",
+      to: "https://forms.gle/MPiaTEv779uF8hE36",
       isExternal: true,
     },
     {
