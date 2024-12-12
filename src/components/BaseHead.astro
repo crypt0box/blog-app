@@ -28,7 +28,7 @@ const { title, slug } = Astro.props;
       type: "article",
       image: slug
         ? new URL(`/og/${slug}.png`, Astro.url.origin).toString()
-        : new URL(`/og/home-og-image.png`, Astro.url.origin).toString(),
+        : new URL("/home-og-image.png", Astro.url.origin).toString(),
     },
     image: {
       alt: title,
