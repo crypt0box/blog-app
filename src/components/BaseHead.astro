@@ -6,7 +6,7 @@ interface Props {
   slug?: string;
 }
 
-const { title, slug = "og-image-background" } = Astro.props;
+const { title, slug } = Astro.props;
 ---
 
 <!--SEO-->
@@ -28,7 +28,7 @@ const { title, slug = "og-image-background" } = Astro.props;
       type: "article",
       image: slug
         ? new URL(`/og/${slug}.png`, Astro.url.origin).toString()
-        : "",
+        : new URL(`/og/home-og-image.png`, Astro.url.origin).toString(),
     },
     image: {
       alt: title,
