@@ -41,10 +41,8 @@ const { title, pubDate, updatedDate, heroImage, slug } = Astro.props;
             {
               updatedDate && (
                 <div class="flex items-center gap-2">
-                  <>
-                    <Twemoji class="m-0 w-4 h-4" emoji="🔄" />
-                    <p class="my-1">{format(pubDate, "yyyy/MM/dd")}</p>
-                  </>
+                  <Twemoji class="m-0 w-4 h-4" emoji="🔄" />
+                  <p class="my-1">{format(pubDate, "yyyy/MM/dd")}</p>
                 </div>
               )
             }
