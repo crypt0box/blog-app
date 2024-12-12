@@ -1,10 +1,7 @@
 ---
 import type { CollectionEntry } from "astro:content";
-import FormattedDate from "../components/FormattedDate.astro";
 import { format } from "date-fns";
-import EmojiLabel from "../components/EmojiLabel.astro";
 import Twemoji from "../components/Twemoji.astro";
-import LinkButton from "../components/LinkButton.astro";
 import { Icon } from "astro-icon/components";
 
 type Props = CollectionEntry<"blog">["data"] & {
@@ -65,23 +62,11 @@ const { title, pubDate, updatedDate, heroImage, slug } = Astro.props;
             </li>
             <li class="m-0 p-0 list-none">
               <a
-                href="https://b.hatena.ne.jp/entry/"
-                class="w-6 h-6"
-                data-hatena-bookmark-layout="touch"
-                title="このエントリーをはてなブックマークに追加"
-                ><img
-                  src="https://b.st-hatena.com/images/v4/public/entry-button/button-only@2x.png"
-                  alt="このエントリーをはてなブックマークに追加"
-                  width="24"
-                  height="24"
-                  style="border: none;"
-                  class="m-0"
-                /></a
-              ><script
-                type="text/javascript"
-                src="https://b.st-hatena.com/js/bookmark_button.js"
-                charset="utf-8"
-                async="async"></script>
+                href={`https://b.hatena.ne.jp/entry/panel/?url=${Astro.request.url}`}
+                target="_blank"
+                rel="noreferrer"
+                ><Icon name="hateb-logo" color="#00A4DE" size="24" /></a
+              >
             </li>
           </ul>
           <hr class="my-4" />
@@ -100,23 +85,11 @@ const { title, pubDate, updatedDate, heroImage, slug } = Astro.props;
           </li>
           <li class="m-0 p-0 list-none">
             <a
-              href="https://b.hatena.ne.jp/entry/"
-              class="w-6 h-6"
-              data-hatena-bookmark-layout="touch"
-              title="このエントリーをはてなブックマークに追加"
-              ><img
-                src="https://b.st-hatena.com/images/v4/public/entry-button/button-only@2x.png"
-                alt="このエントリーをはてなブックマークに追加"
-                width="24"
-                height="24"
-                style="border: none;"
-                class="m-0"
-              /></a
-            ><script
-              type="text/javascript"
-              src="https://b.st-hatena.com/js/bookmark_button.js"
-              charset="utf-8"
-              async="async"></script>
+              href={`https://b.hatena.ne.jp/entry/panel/?url=${Astro.request.url}`}
+              target="_blank"
+              rel="noreferrer"
+              ><Icon name="hateb-logo" color="#00A4DE" size="24" /></a
+            >
           </li>
         </ul>
       </div>
