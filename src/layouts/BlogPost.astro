@@ -5,6 +5,7 @@ import { format } from "date-fns";
 import EmojiLabel from "../components/EmojiLabel.astro";
 import Twemoji from "../components/Twemoji.astro";
 import LinkButton from "../components/LinkButton.astro";
+import { Icon } from "astro-icon/components";
 
 type Props = CollectionEntry<"blog">["data"] & {
   slug: CollectionEntry<"blog">["slug"];
@@ -20,30 +21,60 @@ const { title, pubDate, updatedDate, heroImage, slug } = Astro.props;
     >
       <div class="bg-white p-6 rounded-md">
         <a
-          class="w-fit flex items-center gap-2 no-underline text-slate-700 hover:text-slate-500"
+          class="w-fit flex items-center gap-2 mb-4 no-underline text-slate-700 hover:text-slate-500"
           href="/"
           ><Twemoji class="m-0 w-6 h-6" emoji="👈" /><p class="m-0">
             Back To HOME
           </p></a
         >
         <div class="title">
-          <div class="date">
-            {format(pubDate, "yyyy/MM/dd")}
-            {
-              updatedDate && (
-                <div class="last-updated-on">
-                  Last updated on <FormattedDate date={updatedDate} />
-                </div>
-              )
-            }
-          </div>
+          <div class="date"></div>
           <h1>{title}</h1>
           <div
             class="flex justify-center items-center mx-auto p-10 bg-slate-200"
           >
             <Twemoji class="w-20 h-20" emoji={heroImage} />
           </div>
-          <hr />
+          <div class="flex justify-center gap-2">
+            <div class="flex items-center gap-2">
+              <Twemoji class="m-0 w-4 h-4" emoji="✏️" /><p class="my-1">
+                {format(pubDate, "yyyy/MM/dd")}
+              </p>
+            </div>
+            {
+              updatedDate && (
+                <div class="flex items-center gap-2">
+                  <>
+                    <Twemoji class="m-0 w-4 h-4" emoji="🔄" />
+                    <p class="my-1">{format(pubDate, "yyyy/MM/dd")}</p>
+                  </>
+                </div>
+              )
+            }
+          </div>
+          <ul class="flex justify-center gap-2 m-0 p-0">
+            <li class="m-0 p-0">
+              <a
+                class="block"
+                href={`http://twitter.com/share?url=${Astro.url}/blog/${slug}&text=${title}`}
+                target="_blank"
+                rel="noreferrer"
+              >
+                <Icon name="x-logo" size="24" />
+              </a>
+            </li>
+            <li class="m-0 p-0">
+              <a
+                class="block"
+                href={`http://twitter.com/share?url=${Astro.url}/blog/${slug}&text=${title}`}
+                target="_blank"
+                rel="noreferrer"
+              >
+                <Icon name="hateb-logo" size="24" />
+              </a>
+            </li>
+          </ul>
+          <hr class="my-4" />
         </div>
         <slot />
       </div>
