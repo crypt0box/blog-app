@@ -52,8 +52,8 @@ const { title, pubDate, updatedDate, heroImage, slug } = Astro.props;
               )
             }
           </div>
-          <ul class="flex justify-center gap-2 m-0 p-0">
-            <li class="m-0 p-0">
+          <ul class="flex justify-center gap-6 m-0 p-0">
+            <li class="m-0 p-0 list-none">
               <a
                 class="block"
                 href={`http://twitter.com/share?url=${Astro.url}/blog/${slug}&text=${title}`}
@@ -63,20 +63,62 @@ const { title, pubDate, updatedDate, heroImage, slug } = Astro.props;
                 <Icon name="x-logo" size="24" />
               </a>
             </li>
-            <li class="m-0 p-0">
+            <li class="m-0 p-0 list-none">
               <a
-                class="block"
-                href={`http://twitter.com/share?url=${Astro.url}/blog/${slug}&text=${title}`}
-                target="_blank"
-                rel="noreferrer"
-              >
-                <Icon name="hateb-logo" size="24" />
-              </a>
+                href="https://b.hatena.ne.jp/entry/"
+                class="w-6 h-6"
+                data-hatena-bookmark-layout="touch"
+                title="このエントリーをはてなブックマークに追加"
+                ><img
+                  src="https://b.st-hatena.com/images/v4/public/entry-button/button-only@2x.png"
+                  alt="このエントリーをはてなブックマークに追加"
+                  width="24"
+                  height="24"
+                  style="border: none;"
+                  class="m-0"
+                /></a
+              ><script
+                type="text/javascript"
+                src="https://b.st-hatena.com/js/bookmark_button.js"
+                charset="utf-8"
+                async="async"></script>
             </li>
           </ul>
           <hr class="my-4" />
         </div>
         <slot />
+        <ul class="flex justify-center gap-6 m-0 p-0">
+          <li class="m-0 p-0 list-none">
+            <a
+              class="block"
+              href={`http://twitter.com/share?url=${Astro.url}/blog/${slug}&text=${title}`}
+              target="_blank"
+              rel="noreferrer"
+            >
+              <Icon name="x-logo" size="24" />
+            </a>
+          </li>
+          <li class="m-0 p-0 list-none">
+            <a
+              href="https://b.hatena.ne.jp/entry/"
+              class="w-6 h-6"
+              data-hatena-bookmark-layout="touch"
+              title="このエントリーをはてなブックマークに追加"
+              ><img
+                src="https://b.st-hatena.com/images/v4/public/entry-button/button-only@2x.png"
+                alt="このエントリーをはてなブックマークに追加"
+                width="24"
+                height="24"
+                style="border: none;"
+                class="m-0"
+              /></a
+            ><script
+              type="text/javascript"
+              src="https://b.st-hatena.com/js/bookmark_button.js"
+              charset="utf-8"
+              async="async"></script>
+          </li>
+        </ul>
       </div>
     </article>
   </body>
