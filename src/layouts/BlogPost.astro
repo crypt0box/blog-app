@@ -51,7 +51,7 @@ const { title, pubDate, updatedDate, heroImage, slug } = Astro.props;
             <li class="m-0 p-0 list-none">
               <a
                 class="block"
-                href={`http://twitter.com/share?url=${Astro.url}/blog/${slug}&text=${title}`}
+                href={`http://twitter.com/intent/tweet?url=${Astro.url}/blog/${slug}&text=${title}`}
                 target="_blank"
                 rel="noreferrer"
               >
@@ -74,7 +74,7 @@ const { title, pubDate, updatedDate, heroImage, slug } = Astro.props;
           <li class="m-0 p-0 list-none">
             <a
               class="block"
-              href={`http://twitter.com/share?url=${Astro.url}/blog/${slug}&text=${title}`}
+              href={`http://twitter.com/intent/tweet?url=${Astro.url}/blog/${slug}&text=${title}`}
               target="_blank"
               rel="noreferrer"
             >
