@@ -32,41 +32,50 @@ const slug = Astro.props?.slug;
       decoding="async"
       loading="lazy"
     />
-    <header class="relative min-h-14 bg-slate-100 sm:rounded-b-xl p-4 z-20">
-      <h1 class="absolute font-bold">Cryptobox Tech Blog</h1>
-      <nav class="hidden sm:flex sm:justify-center">
-        <ul class="flex gap-4">
-          <li>
-            <LinkButton to="/">HOME</LinkButton>
-          </li>
-          <li>
-            <LinkButton to="/about">ABOUT</LinkButton>
-          </li>
-          <li>
-            <LinkButton to="https://forms.gle/MPiaTEv779uF8hE36" isExternal
-              >CONTACT</LinkButton
-            >
-          </li>
-        </ul>
-      </nav>
-      <MobileNav client:only="react" />
-      <div class="hidden sm:block absolute right-6 top-2">
-        <ul class="flex gap-2">
-          {
-            profileConfig.links.map((link) => (
-              <li>
-                <a
-                  class="block p-2 rounded-full hover:bg-slate-300"
-                  href={link.to}
-                  target="_blank"
-                  rel="noreferrer"
-                >
-                  <Icon name={link.icon} size="24" />
-                </a>
-              </li>
-            ))
-          }
-        </ul>
+    <header class="sticky top-0 min-h-14 bg-slate-100 sm:rounded-b-xl p-4 z-20">
+      <div class="flex justify-between items-center">
+        <a href="/">
+          <img
+            src="/title.svg"
+            alt="banner image"
+            decoding="async"
+            loading="lazy"
+          />
+        </a>
+        <nav class="hidden sm:flex sm:justify-center">
+          <ul class="flex gap-4">
+            <li>
+              <LinkButton to="/">HOME</LinkButton>
+            </li>
+            <li>
+              <LinkButton to="/about">ABOUT</LinkButton>
+            </li>
+            <li>
+              <LinkButton to="https://forms.gle/MPiaTEv779uF8hE36" isExternal
+                >CONTACT</LinkButton
+              >
+            </li>
+          </ul>
+        </nav>
+        <MobileNav client:only="react" />
+        <div class="hidden sm:block">
+          <ul class="flex gap-2">
+            {
+              profileConfig.links.map((link) => (
+                <li>
+                  <a
+                    class="block p-2 rounded-full hover:bg-slate-300"
+                    href={link.to}
+                    target="_blank"
+                    rel="noreferrer"
+                  >
+                    <Icon name={link.icon} size="24" />
+                  </a>
+                </li>
+              ))
+            }
+          </ul>
+        </div>
       </div>
     </header>
     <main class="z-10"><slot /></main>
