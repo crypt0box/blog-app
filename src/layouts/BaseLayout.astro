@@ -32,6 +32,7 @@ const slug = Astro.props?.slug;
       src={bannerImage}
       widths={[240, 540, 720, bannerImage.width]}
       sizes={`(max-width: 360px) 240px, (max-width: 720px) 540px, (max-width: 1600px) 720px, ${bannerImage.width}px`}
+      quality={"low"}
       alt="banner image"
     />
     <header class="sticky top-0 min-h-14 bg-slate-100 sm:rounded-b-xl p-4 z-20">
