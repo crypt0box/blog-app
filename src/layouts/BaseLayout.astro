@@ -6,6 +6,8 @@ import { Icon } from "astro-icon/components";
 import { profileConfig } from "../config";
 import { MobileNav } from "../components/MobileNav";
 import { ViewTransitions } from "astro:transitions";
+import bannerImage from "../images/banner.png";
+import { Image } from "astro:assets";
 
 type Props = {
   title: string;
@@ -25,19 +27,17 @@ const slug = Astro.props?.slug;
   <div
     class="grid grid-rows-[auto_1fr_auto] grid-cols-[100%] mx-auto max-w-[1200px] min-h-screen bg-slate-200 sm:px-4"
   >
-    <img
+    <Image
       class="fixed right-0 w-screen"
-      src="/banner.png"
+      src={bannerImage}
       alt="banner image"
-      decoding="async"
-      loading="lazy"
     />
     <header class="sticky top-0 min-h-14 bg-slate-100 sm:rounded-b-xl p-4 z-20">
       <div class="flex justify-between items-center">
         <a href="/">
           <img
             src="/title.svg"
-            alt="banner image"
+            alt="title image"
             decoding="async"
             loading="lazy"
           />
