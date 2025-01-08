@@ -1,0 +1,108 @@
+---
+title: "結局プリントデバッグが最強なのでライブラリもプリントデバッグする"
+description: "pnpm add linkやyarn add linkを使うとローカルにクローンしたライブラリを直接アプリ側で使うことができ、簡単にデバッグすることができる。"
+pubDate: "2024-01-09"
+heroImage: "😉"
+tags:
+  - pnpm
+	- yarn
+---
+
+## 😏 プリントデバッグは最強
+
+エンジニアになって半年くらい経ったとき、プリントデバッグをしているのがなんだがスマートじゃない気がして、IDEのデバッグツールを使ったりしてみた。
+最初は「こんな便利機能なんで今まで使わなかったんだろう」と思うのだが、数日経つと全てを忘れてプリントデバッグしていた。
+結局`console.log`するのが一番手軽で最強のツールなのだ。
+
+## 🎯 ライブラリをプリントデバッグする
+
+普段はReactを書いているのだが、開発をする中でライブラリ側の挙動を知りたくなることがそこそこある。
+そんなとき`node_module`から該当のライブラリを探し出して、変数を`console.log`しようとする。
+けど`node_module`にあるコードは基本minifyされており、どんな処理が書いてあるか全く読み取れず、どこに`console.log`を書けばいいかわからない。
+そんなときに使うと便利なのが`pnpm add link`というコマンドだ。
+
+```bash
+pnpm add link
+```
+
+yarnならこう。
+
+```bash
+yarn add link
+```
+
+これを使うとローカルにクローンしたプロジェクトを直接アプリ側で使うことができ、簡単にデバッグすることができる。
+
+## 🤔 もっと詳しく
+
+[react-hook-form](https://github.com/react-hook-form/react-hook-form)というライブラリを例にとって実際にデバッグしてみる。
+
+まずは任意のディレクトリに`react-hook-form`をクローンする。
+
+```bash
+git clone https://github.com/react-hook-form/react-hook-form.git
+```
+
+そしてプロジェクトをクローンしたディレクトリの絶対パスをコピーしておく。
+
+次に`react-hook-form`を使う側のアプリをセットアップする。今回は手軽に`create vite`でセットアップする。
+
+```bash
+pnpm create vite my-app --template react-ts
+cd my-app
+```
+
+そして以下のコマンドを実行して、ローカルにクローンした`react-hook-form`のシンボリックリンクを作成する。
+
+> シンボリックリンク（symbolic link）とは、オペレーティングシステム(OS)のファイルシステムの機能の一つで、特定のファイルやディレクトリを指し示す別のファイルを作成し、それを通じて本体を参照できるようにする仕組み。<br>
+> 引用：https://e-words.jp/w/%E3%82%B7%E3%83%B3%E3%83%9C%E3%83%AA%E3%83%83%E3%82%AF%E3%83%AA%E3%83%B3%E3%82%AF.html
+
+```bash
+pnpm add link <ローカルのreact-hook-formの絶対パス>
+```
+
+すると`package.json`に`react-hook-form`が追加されているのがわかる。
+
+```diff
++ "react-hook-form": "<ローカルのreact-hook-formの絶対パス>"
+```
+
+これだけで準備完了。試しに`react-hook-form`側の`src\index.ts`に`console.log`を追加してみる。
+
+```diff
+export * from './controller';
+export * from './form';
+export * from './logic';
+export * from './types';
+export * from './useController';
+export * from './useFieldArray';
+export * from './useForm';
+export * from './useFormContext';
+export * from './useFormState';
+export * from './useWatch';
+export * from './utils';
++ console.log("hello");
+```
+
+ここで`pnpm build:watch`を実行して変更を反映させておく。
+
+そして、アプリ側の`src\App.tsx`で以下のように任意のAPIを呼び出してサーバーを起動する。
+
+```tsx
+import { useForm } from "react-hook-form";
+
+const App = () => {
+  const { register, handleSubmit } = useForm();
+  // 略
+};
+```
+
+```bash
+pnpm dev
+```
+
+コンソールを確認すると`hello`が出力されているのがわかる。
+
+## 📝 まとめ
+
+このように`pnpm add link`を使うとライブラリ側のコードも簡単にデバッグできる。デバッグだけでなく自由にコードを書き換えて動きを確認することもできるので、OSSのコードリーディングやバグ修正にも役立つ。知らなかった方はぜひ活用してみてほしい。
