@@ -15,7 +15,7 @@ const { class: className, tags, ...rest } = Astro.props;
   <h2 class="pl-2 border-l-4 border-slate-300 font-bold text-lg text-slate-600">
     Tags
   </h2>
-  <ul class="flex gap-2">
+  <ul class="flex gap-2 flex-wrap">
     {
       tags.map((tag) => (
         <li>
