@@ -19,10 +19,10 @@ Reactではinline styleを用いて簡単にスタイリングができる。し
 そんな中inline styleを使っている同僚のコードを発見したため、指摘を入れようとしたのだが、そこで手が止まった。
 
 確かに、旧公式Reactドキュメントにはinline styleを使ったスタイリングは推奨されないと記述がある。しかし、その理由が書いていない。
-**公式ではinline styleは推奨されないという記述があるので、css-in-jsに書き直してください**、と指摘をいれるのは根拠としては少し薄くないだろうか？（チーム間でスタイリングルールをすり合わせておくべき、といった意見は本題と逸れるので一旦置いておく）
-理想的には**○○という理由があり、公式ドキュメントでも推奨されていないのでinline styleの使用は避けてください**、と指摘したい。
+**公式ではinline styleは推奨されないという記述があるので、css-in-jsに書き直してください**と指摘をいれるのは根拠としては少し薄くないだろうか？（チーム間でスタイリングルールをすり合わせておくべき、といった意見は本題と逸れるので一旦置いておく）
+理想的には**XXという理由があり、公式ドキュメントでも推奨されていないのでinline styleの使用は避けてください** と指摘したい。
 そこで何故inline styleを使ったスタイリングは推奨されないのかを調べてみたのだが、その理由について言及している記事はほとんどなかった（もちろん公式にも無い）。
-いくつかのブログ記事には`inline styleはパフォーマンスが悪い`という記述があったのだが、測定データや参考文献が記述されていなかった。これでは根拠としては薄い。
+いくつかのブログ記事には**inline styleはパフォーマンスが悪い**という記述があったのだが、測定データや参考文献が記述されていなかった。これでは根拠としては薄い。
 ただ、なんとなくinline styleはパフォーマンスが悪いというのは正しいような気がした。実際に計測データを取り、パフォーマンスが悪いことが確認できれば自信を持って指摘ができる。
 
 ## ベンチマークをとる
@@ -36,7 +36,7 @@ https://github.com/mui/material-ui/blob/master/benchmark/browser/scripts/benchma
 
 まず、このコードのメイン関数である`run`から見ていく。
 
-```js:benchmark.js
+```js
 async function run() {
   // 結果を保存するディレクトリを作成
   const workspaceRoot = path.resolve(__dirname, "../../../");
@@ -203,7 +203,7 @@ async function runMeasures(browser, testCaseName, testCase, baseline) {
 
 `window.timing.render`は`benchmark/browser/index.js`で定義されているので見ていく。
 
-```js:benchmark/browser/index.js
+```js
 // 中略
 
 const start = performance.now();
@@ -274,7 +274,7 @@ css-in-jsに関してはMUIの`benchmark`ディレクトリ内にすでに用意
 ついでなのでこれに加えてMUIのsx propsを使用したものも比較対象に入れておく。こちらも`benchmark`にすでに用意されているものである。
 inline styleに関しては、自分でコードを書いて用意した。中身は以下のようになっている。
 
-```jsx:inline-style/index.js
+```jsx
 import * as React from "react";
 
 export default function InlineStyle() {
