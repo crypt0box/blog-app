@@ -1,0 +1,332 @@
+---
+title: "インラインスタイルのパフォーマンスは低いのか"
+description: "この記事では、Reactにおけるinline styleのパフォーマンスについて、MUIのベンチマークツールを使用して検証を行った。結果から少なくともパフォーマンスの観点からinline styleを避けるべきという指摘は適切ではない可能性が示唆された。ただし、この結果はスタイリングの条件によって変わる可能性があることには留意が必要である。"
+pubDate: "2025-01-23"
+heroImage: "🐧"
+tags:
+  - performance
+  - css
+---
+
+## TL;DR
+
+- inline styleのパフォーマンスは高い
+- パフォーマンス比較にあたってはMUIのベンチマークが便利だった
+
+## きっかけ
+
+Reactではinline styleを用いて簡単にスタイリングができる。しかし、旧公式Reactドキュメントにはinline styleを使ったスタイリングは[推奨されない](https://ja.legacy.reactjs.org/docs/dom-elements.html#style)と記述があり、基本的には使わないようにしていた。
+そんな中inline styleを使っている同僚のコードを発見したため、指摘を入れようとしたのだが、そこで手が止まった。
+
+確かに、旧公式Reactドキュメントにはinline styleを使ったスタイリングは推奨されないと記述がある。しかし、その理由が書いていない。
+**公式ではinline styleは推奨されないという記述があるので、css-in-jsに書き直してください**、と指摘をいれるのは根拠としては少し薄くないだろうか？（チーム間でスタイリングルールをすり合わせておくべき、といった意見は本題と逸れるので一旦置いておく）
+理想的には**○○という理由があり、公式ドキュメントでも推奨されていないのでinline styleの使用は避けてください**、と指摘したい。
+そこで何故inline styleを使ったスタイリングは推奨されないのかを調べてみたのだが、その理由について言及している記事はほとんどなかった（もちろん公式にも無い）。
+いくつかのブログ記事には`inline styleはパフォーマンスが悪い`という記述があったのだが、測定データや参考文献が記述されていなかった。これでは根拠としては薄い。
+ただ、なんとなくinline styleはパフォーマンスが悪いというのは正しいような気がした。実際に計測データを取り、パフォーマンスが悪いことが確認できれば自信を持って指摘ができる。
+
+## ベンチマークをとる
+
+スタイリングの違いによるパフォーマンスの差をどのように計測すればよいか調べたところ、MUIがベンチマークを用意していることがわかった。
+
+https://github.com/mui/material-ui/blob/master/benchmark/browser/scripts/benchmark.js
+
+これを使えば、`benchmark:browser`で任意のコンポーネントのレンダリング時間を計測・比較することができる。
+せっかくなのでベンチマークがどのような処理をしているか見ていきたい。
+
+まず、このコードのメイン関数である`run`から見ていく。
+
+```js:benchmark.js
+async function run() {
+  // 結果を保存するディレクトリを作成
+  const workspaceRoot = path.resolve(__dirname, "../../../");
+  const outputDir = path.join(workspaceRoot, "tmp", "benchmarks");
+
+  // ブラウザとサーバーを起動---①
+  const [server, browser] = await Promise.all([
+    createServer({ port: PORT }),
+    createBrowser(),
+    fse.mkdirp(outputDir),
+  ]);
+
+  // 結果のログをファイルに保存
+  const outputFile = fse.createWriteStream(path.join(outputDir, "browser.log"));
+  const stdoutWrite = process.stdout.write;
+  process.stdout.write = function writePiped(...args) {
+    stdoutWrite.apply(this, args);
+    outputFile.write(...args);
+  };
+
+  try {
+    // ベンチマークの対象となるコンポーネントを設定---②
+    const cases = [
+      // 中略
+    ];
+
+    let baseline;
+
+    // ベンチマークを実行---③
+    for (let i = 0; i < cases.length; i += 1) {
+      const stats = await runMeasures(
+        browser,
+        cases[i].name,
+        cases[i].path,
+        baseline,
+      );
+
+      if (i === 1) {
+        baseline = stats;
+      }
+    }
+  } finally {
+    await Promise.all([browser.close(), server.close()]);
+  }
+}
+```
+
+### ブラウザとサーバーを起動---①
+
+`createServer`と`createBrowser`でブラウザとサーバーを起動している。それぞれの中身は以下。
+
+```js
+// ローカルサーバーを作成する関数
+// テストケースを提供するためのHTTPサーバーをセットアップ
+function createServer(options) {
+  const { port } = options;
+  const server = http.createServer((request, response) => {
+    return handler(request, response, {
+      public: path.resolve(__dirname, "../"),
+    });
+  });
+
+  // サーバーを適切にシャットダウンするためのclose関数
+  function close() {
+    return new Promise((resolve, reject) => {
+      server.close((error) => {
+        if (error !== undefined) {
+          reject(error);
+        } else {
+          resolve();
+        }
+      });
+    });
+  }
+
+  return new Promise((resolve) => {
+    server.listen(port, () => {
+      resolve({ close });
+    });
+  });
+}
+
+// Playwrightを使用してブラウザインスタンスを作成する関数
+async function createBrowser() {
+  const browser = await playwright.chromium.launch();
+
+  return {
+    // 新しいページを開いてURLに移動する関数
+    openPage: async (url) => {
+      const page = await browser.newPage();
+      await page.goto(url);
+      return page;
+    },
+    close: () => browser.close(),
+  };
+}
+```
+
+Playwrightでブラウザを起動し、各テストケースのコンポーネントを描画するようだ。
+
+### ベンチマークの対象となるコンポーネントを設定---②
+
+`cases`にはベンチマークの対象となるコンポーネント名とパスが設定されている。
+ここに任意のコンポーネントのパスを指定することでベンチマークの対象とすることができる。
+例えば以下のように指定すればよい。
+
+```js
+const cases = [
+  {
+    name: "MyComponent",
+    path: "./path/to/MyComponent.js",
+  },
+];
+```
+
+### ベンチマークを実行---③
+
+ここでベンチマークを実行している。`runMeasures`がキモなので中身を見ていく。
+
+```js
+/**
+ * 特定のテストケースに対して複数回の測定を実行する関数
+ * @param {{ openPage: (url: any) => Promise<import('playwright').Page>}} browser
+ * @param {string} testCaseName
+ * @param {string} testCase
+ * @param {*} baseline
+ */
+async function runMeasures(browser, testCaseName, testCase, baseline) {
+  const samples = [];
+
+  // 15回の測定を実行
+  for (let i = 0; i < 15; i += 1) {
+    const url = `http://localhost:${PORT}/?${testCase}`;
+    const page = await browser.openPage(url);
+
+    // ページ内のレンダリング時間を取得
+    const benchmark = await page.evaluate(() => {
+      return window.timing.render;
+    });
+
+    samples.push(benchmark);
+    await page.close();
+  }
+
+  // 統計データを計算
+  const sortedSamples = [...samples.concat()].sort();
+  const stats = {
+    samples,
+    sampleCount: samples.length,
+    mean: getMean(samples),
+    median: getMedian(samples),
+    min: sortedSamples[0],
+    max: sortedSamples[sortedSamples.length - 1],
+    stdDev: getStdDev(samples),
+  };
+
+  printMeasure(testCaseName, stats, baseline);
+  return stats;
+}
+```
+
+1つのテストケースに対して15回の測定を行い、その結果を統計データとして計算している。
+計測値は`window.timing.render`で取得しているようだが、これは何を計測しているのだろうか？
+
+`window.timing.render`は`benchmark/browser/index.js`で定義されているので見ていく。
+
+```js:benchmark/browser/index.js
+// 中略
+
+const start = performance.now();
+let end;
+
+function Measure(props) {
+  const ref = React.useRef(null);
+
+  React.useLayoutEffect(() => {
+    // Force layout
+    ref.current.getBoundingClientRect();
+
+    end = performance.now();
+    window.timing = {
+      render: end - start,
+    };
+  });
+
+  return <div ref={ref}>{props.children}</div>;
+}
+
+// 中略
+```
+
+このファイルはPlaywrightでブラウザを起動した際に読み込まれるもので、読み込むと同時に`start`にタイムスタンプを代入している。
+そして`useLayoutEffect`内で`end`にタイムスタンプを代入し、`end - start`を計算することでページが表示されてからコンポーネントが[コミット](https://ja.react.dev/learn/render-and-commit)されるまでの時間を計測しているようだ。
+
+そして`printMeasure`関数で計測結果をログに出力している。
+
+```js
+// 測定結果を出力する関数
+// baselineが提供された場合は相対的なパフォーマンスを表示
+const printMeasure = (name, stats, baseline) => {
+  console.log(`${name}:`);
+  if (baseline) {
+    console.log(
+      `  ${Math.round((stats.mean / baseline.mean) * 100)} ±${Math.round(
+        (stats.stdDev / baseline.mean) * 100,
+      )}%`,
+    );
+  } else {
+    console.log(`  ${format(stats.mean)} ±${format(stats.stdDev)}ms`);
+  }
+};
+```
+
+計算結果はベースラインとなるコンポーネントとの相対値か、絶対値かのどちらかで表示できるようになっている。
+例えばMUIが用意しているGridコンポーネントを`baseline`に指定し、比較対象に`Grid Material UI`を指定すると以下のような計測結果が得られる。
+
+```plaintext
+Grid (html): // ←baselineに指定
+  31.52 ±04.25ms
+Grid Material UI:
+  177 ±3%
+```
+
+`Grid (html)`はhtmlとcss-in-jsを使って表現されたシンプルなGridコンポーネントで、`Grid Material UI`は`@mui/material`のGridコンポーネントだ。
+それぞれコンポーネントを1000個ずつ表示したときの計測結果が表示されており、`Grid (html)`は`31.52ms`で`±04.25ms`のバラツキがある。
+一方、`Grid Material UI`は`Grid (html)`と比較して1.77倍レンダリングに時間がかかっており、`±3%`のバラツキがある、ということが読み取れる。
+
+それぞれの絶対値を出力したほうがわかりやすいので、今回は`baseline`を指定しないで計測することにする。
+
+## inline styleとcss-in-jsのパフォーマンス比較
+
+それでは本題のinline styleとcss-in-jsのパフォーマンス比較を行っていく。
+css-in-jsに関してはMUIの`benchmark`ディレクトリ内にすでに用意されている`styled-emotion/index.js`と`styled-sc/index.js`ファイルを使用する。
+これらはそれぞれ、divタグにemotion、styled-componentsでスタイルを適用したものだ。ただし今回はinline styleと比較するため、`hover`や`breakpoint`のスタイルは削除している。
+ついでなのでこれに加えてMUIのsx propsを使用したものも比較対象に入れておく。こちらも`benchmark`にすでに用意されているものである。
+inline styleに関しては、自分でコードを書いて用意した。中身は以下のようになっている。
+
+```jsx:inline-style/index.js
+import * as React from "react";
+
+export default function InlineStyle() {
+  return (
+    <React.Fragment>
+      {new Array(1000).fill().map(() => (
+        <div
+          style={{
+            width: 200,
+            height: 200,
+            borderWidth: 3,
+            borderColor: "white",
+            backgroundColor: "rgb(25, 118, 210)",
+          }}
+        >
+          test case
+        </div>
+      ))}
+    </React.Fragment>
+  );
+}
+```
+
+ちなみに測定環境は以下。
+
+| 項目   | 詳細                                                   |
+| ------ | ------------------------------------------------------ |
+| OS     | Windows 11 Pro 64ビット (10.0, ビルド 22631)           |
+| CPU    | 13th Gen Intel(R) Core(TM) i7-13700 (24 CPUs), ~2.1GHz |
+| メモリ | 32768MB RAM                                            |
+| Chrome | 131.0.6778.265 (Official Build) (64-bit)               |
+
+結果は以下のようになった。
+
+| Style Type     | Time (ms)    |
+| -------------- | ------------ |
+| Inline Style   | 23.71 ± 0.22 |
+| Styled Emotion | 28.39 ± 0.66 |
+| Styled SC      | 25.94 ± 1.34 |
+| sx props       | 39.28 ± 0.84 |
+
+スタイリングの条件によって結果が変わる可能性があることには留意しつつ、当初の予想に反してinline styleが最もパフォーマンスが高いという結果が得られた。
+したがって、**inline styleはパフォーマンスが悪いので避けたほうが良い**という指摘こそ避けるべきなのかもしれない。
+
+## まとめ
+
+inline styleのパフォーマンスが本当に悪いのか検証したところ、そんなこともなくむしろハイパフォーマンスだった。
+やはり、ネットの情報を鵜呑みにするのは良くない。自分でベンチマークを取るなど、一次情報を得ることを意識していきたい。
+検証にあたってはMUIのベンチマークツールがとても役に立った。今回は簡単な条件でのパフォーマンス比較となったが、より複雑なスタイリングの場合、結果がどう変わっていくかも今後検証していきたい。
+
+## 参考
+
+- https://github.com/mui/material-ui/tree/master/benchmark/browser
+- [ZOZOTOWN Webフロントエンドリプレイスにおける CSS in JS の技術選定で Emotion を選定した話](https://techblog.zozo.com/entry/zozotown-css-in-js)
+- [MUIのコンポーネント装飾について速度比較する Box編](https://zenn.dev/enish/articles/a2314fc2c00cf7)
