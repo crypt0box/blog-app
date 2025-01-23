@@ -8,7 +8,7 @@ import { format } from "date-fns";
 import EmojiLabel from "../components/EmojiLabel.astro";
 import Profile from "../components/Profile.astro";
 import Tags from "../components/Tags.astro";
-import "../styles/global.css";
+
 const posts = (await getCollection("blog")).sort(
   (a, b) => b.data.pubDate.getTime() - a.data.pubDate.getTime(),
 );
