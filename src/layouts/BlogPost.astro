@@ -11,65 +11,61 @@ type Props = CollectionEntry<"blog">["data"] & {
 const { title, pubDate, updatedDate, heroImage, slug } = Astro.props;
 ---
 
-<html lang="ja">
-  <body>
-    <article
-      class="prose prose-lg bg-slate-100 my-4 max-w-full sm:p-6 sm:rounded-md"
+<article
+  class="prose prose-lg bg-slate-100 my-4 max-w-full sm:p-6 sm:rounded-md"
+>
+  <div class="bg-white p-6 rounded-md">
+    <a
+      class="w-fit flex items-center gap-2 mb-4 no-underline text-slate-700 hover:text-slate-500"
+      href="/"
+      ><Twemoji class="m-0 w-6 h-6" emoji="👈" /><p class="m-0">
+        Back To HOME
+      </p></a
     >
-      <div class="bg-white p-6 rounded-md">
-        <a
-          class="w-fit flex items-center gap-2 mb-4 no-underline text-slate-700 hover:text-slate-500"
-          href="/"
-          ><Twemoji class="m-0 w-6 h-6" emoji="👈" /><p class="m-0">
-            Back To HOME
-          </p></a
-        >
-        <div class="title">
-          <h1>{title}</h1>
-          <div
-            class="flex justify-center items-center mx-auto my-2 p-10 bg-slate-200"
-          >
-            <Twemoji class="w-20 h-20" emoji={heroImage} />
-          </div>
-          <div class="flex justify-center gap-2">
-            <div class="flex items-center gap-2">
-              <Twemoji class="m-0 w-4 h-4" emoji="✏️" /><p class="my-1">
-                {format(pubDate, "yyyy/MM/dd")}
-              </p>
-            </div>
-            {
-              updatedDate && (
-                <div class="flex items-center gap-2">
-                  <Twemoji class="m-0 w-4 h-4" emoji="🔄" />
-                  <p class="my-1">{format(pubDate, "yyyy/MM/dd")}</p>
-                </div>
-              )
-            }
-          </div>
-          <hr class="my-1" />
-        </div>
-        <slot />
-        <ul class="flex justify-end gap-6 m-0 p-0">
-          <li class="m-0 p-0 list-none">
-            <a
-              class="block"
-              href={`http://twitter.com/intent/tweet?url=${Astro.request.url}&text=${title}`}
-              target="_blank"
-              rel="noreferrer"
-            >
-              <Icon name="x-logo" size="24" />
-            </a>
-          </li>
-          <li class="m-0 p-0 list-none">
-            <a
-              href={`https://b.hatena.ne.jp/entry/panel/?url=${Astro.request.url}`}
-              target="_blank"
-              rel="noreferrer"
-              ><Icon name="hateb-logo" color="#00A4DE" size="24" /></a
-            >
-          </li>
-        </ul>
+    <div class="title">
+      <h1>{title}</h1>
+      <div
+        class="flex justify-center items-center mx-auto my-2 p-10 bg-slate-200"
+      >
+        <Twemoji class="w-20 h-20" emoji={heroImage} />
       </div>
-    </article>
-  </body>
-</html>
+      <div class="flex justify-center gap-2">
+        <div class="flex items-center gap-2">
+          <Twemoji class="m-0 w-4 h-4" emoji="✏️" /><p class="my-1">
+            {format(pubDate, "yyyy/MM/dd")}
+          </p>
+        </div>
+        {
+          updatedDate && (
+            <div class="flex items-center gap-2">
+              <Twemoji class="m-0 w-4 h-4" emoji="🔄" />
+              <p class="my-1">{format(pubDate, "yyyy/MM/dd")}</p>
+            </div>
+          )
+        }
+      </div>
+      <hr class="my-1" />
+    </div>
+    <slot />
+    <ul class="flex justify-end gap-6 m-0 p-0">
+      <li class="m-0 p-0 list-none">
+        <a
+          class="block"
+          href={`http://twitter.com/intent/tweet?url=${Astro.request.url}&text=${title}`}
+          target="_blank"
+          rel="noreferrer"
+        >
+          <Icon name="x-logo" size="24" />
+        </a>
+      </li>
+      <li class="m-0 p-0 list-none">
+        <a
+          href={`https://b.hatena.ne.jp/entry/panel/?url=${Astro.request.url}`}
+          target="_blank"
+          rel="noreferrer"
+          ><Icon name="hateb-logo" color="#00A4DE" size="24" /></a
+        >
+      </li>
+    </ul>
+  </div>
+</article>

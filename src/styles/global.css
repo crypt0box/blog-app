@@ -1,7 +1,3 @@
 html:has(dialog[open]) {
   overflow: hidden;
 }
-
-body {
-  word-break: break-all;
-}

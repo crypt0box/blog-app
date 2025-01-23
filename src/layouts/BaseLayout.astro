@@ -25,66 +25,68 @@ const slug = Astro.props?.slug;
     <BaseHead title={title} slug={slug} />
     <ViewTransitions />
   </head>
-  <div
-    class="grid grid-rows-[auto_1fr_auto] grid-cols-[100%] mx-auto max-w-[1200px] min-h-screen bg-slate-200 sm:px-4"
-  >
-    <Image
-      class="fixed right-0 w-screen"
-      src={bannerImage}
-      widths={[240, 540, 720, bannerImage.width]}
-      sizes={`(max-width: 360px) 240px, (max-width: 720px) 540px, (max-width: 1600px) 720px, ${bannerImage.width}px`}
-      quality={"low"}
-      alt="banner image"
-    />
-    <header class="sticky top-0 min-h-14 bg-slate-100 sm:rounded-b-xl p-4 z-20">
-      <div class="flex justify-between items-center">
-        <a href="/">
-          <img
-            src="/title.svg"
-            alt="title image"
-            decoding="async"
-            loading="lazy"
-          />
-        </a>
-        <nav class="hidden sm:flex sm:justify-center">
-          <ul class="flex gap-4">
-            <li>
-              <LinkButton to="/">HOME</LinkButton>
-            </li>
-            <li>
-              <LinkButton to="/about">ABOUT</LinkButton>
-            </li>
-            <li>
-              <LinkButton to="https://forms.gle/MPiaTEv779uF8hE36" isExternal
-                >CONTACT</LinkButton
-              >
-            </li>
-          </ul>
-        </nav>
-        <MobileNav client:only="react" />
-        <div class="hidden sm:block">
-          <ul class="flex gap-2">
-            {
-              profileConfig.links.map((link) => (
-                <li>
-                  <a
-                    class="block p-2 rounded-full hover:bg-slate-300"
-                    href={link.to}
-                    target="_blank"
-                    rel="noreferrer"
-                  >
-                    <Icon name={link.icon} size="24" />
-                  </a>
-                </li>
-              ))
-            }
-          </ul>
+  <body class="break-all bg-slate-200">
+    <div
+      class="grid grid-rows-[auto_1fr_auto] grid-cols-[100%] mx-auto max-w-[1200px] min-h-screen bg-slate-200 sm:px-4"
+    >
+      <Image
+        class="fixed right-0 w-screen"
+        src={bannerImage}
+        widths={[240, 540, 720, bannerImage.width]}
+        sizes={`(max-width: 360px) 240px, (max-width: 720px) 540px, (max-width: 1600px) 720px, ${bannerImage.width}px`}
+        quality={"low"}
+        alt="banner image"
+      />
+      <header
+        class="sticky top-0 min-h-14 bg-slate-100 sm:rounded-b-xl p-4 z-20"
+      >
+        <div class="flex justify-between items-center">
+          <a href="/">
+            <img
+              src="/title.svg"
+              alt="title image"
+              decoding="async"
+              loading="lazy"
+            />
+          </a>
+          <nav class="hidden sm:flex sm:justify-center">
+            <ul class="flex gap-4">
+              <li>
+                <LinkButton to="/">HOME</LinkButton>
+              </li>
+              <li>
+                <LinkButton to="/about">ABOUT</LinkButton>
+              </li>
+              <li>
+                <LinkButton to="https://forms.gle/MPiaTEv779uF8hE36" isExternal
+                  >CONTACT</LinkButton
+                >
+              </li>
+            </ul>
+          </nav>
+          <MobileNav client:only="react" />
+          <div class="hidden sm:block">
+            <ul class="flex gap-2">
+              {
+                profileConfig.links.map((link) => (
+                  <li>
+                    <a
+                      class="block p-2 rounded-full hover:bg-slate-300"
+                      href={link.to}
+                      target="_blank"
+                      rel="noreferrer"
+                    >
+                      <Icon name={link.icon} size="24" />
+                    </a>
+                  </li>
+                ))
+              }
+            </ul>
+          </div>
         </div>
-      </div>
-    </header>
-    <main class="z-10"><slot /></main>
-    <Footer class="z-10" />
-  </div>
-
-  <script></script>
+      </header>
+      <main class="z-10"><slot /></main>
+      <Footer class="z-10" />
+    </div>
+  </body>
 </html>
