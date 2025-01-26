@@ -8,7 +8,7 @@ type Props = CollectionEntry<"blog">["data"] & {
   slug: CollectionEntry<"blog">["slug"];
 };
 
-const { title, pubDate, updatedDate, heroImage, slug } = Astro.props;
+const { title, pubDate, updatedDate, heroImage } = Astro.props;
 ---
 
 <article
