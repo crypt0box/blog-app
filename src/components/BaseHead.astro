@@ -3,10 +3,10 @@ import { SEO } from "astro-seo";
 
 interface Props {
   title: string;
-  slug?: string;
+  id?: string;
 }
 
-const { title, slug } = Astro.props;
+const { title, id } = Astro.props;
 ---
 
 <!--SEO-->
@@ -26,8 +26,8 @@ const { title, slug } = Astro.props;
     basic: {
       title,
       type: "article",
-      image: slug
-        ? new URL(`/og/${slug}.png`, Astro.url.origin).toString()
+      image: id
+        ? new URL(`/og/${id}.png`, Astro.url.origin).toString()
         : new URL("/home-og-image.png", Astro.url.origin).toString(),
     },
     image: {

@@ -32,13 +32,13 @@ const { posts, tags } = Astro.props;
             <div class="sm:grid sm:grid-cols-[auto_240px] gap-2">
               <div>
                 <a
-                  href={`/blog/${post.slug}`}
+                  href={`/blog/${post.id}`}
                   class="sm:hidden flex justify-center items-center w-full h-full p-4 bg-slate-200 rounded-md "
                 >
                   <Twemoji class="w-16 h-16" emoji={post.data.heroImage} />
                 </a>
                 <h2 class="text-2xl font-bold mt-2 sm:mt-0 ">
-                  <a class="hover:text-slate-500" href={`/blog/${post.slug}`}>
+                  <a class="hover:text-slate-500" href={`/blog/${post.id}`}>
                     {post.data.title}
                   </a>
                 </h2>
@@ -69,13 +69,13 @@ const { posts, tags } = Astro.props;
                 </div>
                 <div class="mt-2">
                   <p class="text-slate-500 font-bold">
-                    {post.body.length} words |{" "}
-                    {Math.round(post.body.length / 600)} min read
+                    {post.body?.length} words |{" "}
+                    {Math.round(post.body?.length ?? 0 / 600)} min read
                   </p>
                 </div>
               </div>
               <a
-                href={`/blog/${post.slug}`}
+                href={`/blog/${post.id}`}
                 class="hidden sm:flex justify-center items-center w-full h-full bg-slate-200 rounded-md "
               >
                 <Twemoji class="w-16 h-16" emoji={post.data.heroImage} />
