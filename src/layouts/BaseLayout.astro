@@ -3,27 +3,27 @@ import BaseHead from "../components/BaseHead.astro";
 import Footer from "../components/Footer.astro";
 import LinkButton from "../components/LinkButton.astro";
 import { Icon } from "astro-icon/components";
-import { profileConfig } from "../config";
 import { MobileNav } from "../components/MobileNav";
-import { ViewTransitions } from "astro:transitions";
 import bannerImage from "../images/banner.png";
 import { Image } from "astro:assets";
+import { ClientRouter } from "astro:transitions";
+import { profileConfig } from "../config";
 import "../styles/global.css";
 
 type Props = {
   title: string;
-  slug?: string;
+  id?: string;
 };
 const title = Astro.props.title;
-const slug = Astro.props?.slug;
+const id = Astro.props?.id;
 ---
 
 <html lang="ja">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <BaseHead title={title} slug={slug} />
-    <ViewTransitions />
+    <BaseHead title={title} id={id} />
+    <ClientRouter />
   </head>
   <body class="break-all bg-slate-200">
     <div
