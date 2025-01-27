@@ -16,16 +16,6 @@ export const siteConfig = {
       isExternal: true,
     },
     {
-      name: "X",
-      to: "https://x.com/cryptooooon",
-      isExternal: true,
-    },
-    {
-      name: "Zenn",
-      to: "https://zenn.dev/cryptobox",
-      isExternal: true,
-    },
-    {
       name: "Github",
       to: "https://github.com/crypt0box",
       isExternal: true,
@@ -36,14 +26,9 @@ export const siteConfig = {
 export const profileConfig = {
   links: [
     {
-      name: "X",
-      icon: "x-logo",
-      to: "https://x.com/cryptooooon",
-    },
-    {
-      name: "Zenn",
-      icon: "zenn-logo",
-      to: "https://zenn.dev/cryptobox",
+      name: "rss",
+      icon: "rss-logo",
+      to: "/rss.xml",
     },
     {
       name: "Github",
