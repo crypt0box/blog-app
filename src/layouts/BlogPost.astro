@@ -18,7 +18,7 @@ const { title, pubDate, updatedDate, heroImage } = Astro.props;
     <a
       class="w-fit flex items-center gap-2 mb-4 no-underline text-slate-700 hover:text-slate-500"
       href="/"
-      ><Twemoji class="m-0 w-6 h-6" emoji="👈" /><p class="m-0">
+      ><Twemoji class="m-0 w-6 h-6" emoji="👈" loading="eager" /><p class="m-0">
         Back To HOME
       </p></a
     >
@@ -27,11 +27,13 @@ const { title, pubDate, updatedDate, heroImage } = Astro.props;
       <div
         class="flex justify-center items-center mx-auto my-2 p-10 bg-slate-200"
       >
-        <Twemoji class="w-20 h-20" emoji={heroImage} />
+        <Twemoji class="w-20 h-20" emoji={heroImage} loading="eager" />
       </div>
       <div class="flex justify-center gap-2">
         <div class="flex items-center gap-2">
-          <Twemoji class="m-0 w-4 h-4" emoji="✏️" /><p class="my-1">
+          <Twemoji class="m-0 w-4 h-4" emoji="✏️" loading="eager" /><p
+            class="my-1"
+          >
             {format(pubDate, "yyyy/MM/dd")}
           </p>
         </div>
@@ -54,6 +56,7 @@ const { title, pubDate, updatedDate, heroImage } = Astro.props;
           href={`http://twitter.com/intent/tweet?url=${Astro.request.url}&text=${title}`}
           target="_blank"
           rel="noreferrer"
+          aria-label="X"
         >
           <Icon name="x-logo" size="24" />
         </a>
@@ -63,6 +66,7 @@ const { title, pubDate, updatedDate, heroImage } = Astro.props;
           href={`https://b.hatena.ne.jp/entry/panel/?url=${Astro.request.url}`}
           target="_blank"
           rel="noreferrer"
+          aria-label="はてなブックマーク"
           ><Icon name="hateb-logo" color="#00A4DE" size="24" /></a
         >
       </li>

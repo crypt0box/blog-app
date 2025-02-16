@@ -1,4 +1,6 @@
 ---
+import { Image } from "astro:assets";
+import profileImage from "../assets/jigazou.png";
 const { class: className, ...rest } = Astro.props;
 ---
 
@@ -10,13 +12,12 @@ const { class: className, ...rest } = Astro.props;
   {...rest}
 >
   <!--class="sm:hidden flex" >-->
-  <img
+  <Image
     class="rounded-full"
-    width="160px"
-    height="160px"
-    decoding="async"
-    loading="lazy"
-    src="/jigazou.png"
+    width={160}
+    height={160}
+    loading="eager"
+    src={profileImage}
     alt="ブログ運営者の自画像"
   />
   <div class="w-32 h-2 rounded-md bg-slate-300"></div>

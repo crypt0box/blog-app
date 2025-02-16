@@ -5,6 +5,7 @@ import LinkButton from "../components/LinkButton.astro";
 import { Icon } from "astro-icon/components";
 import { MobileNav } from "../components/MobileNav";
 import bannerImage from "../images/banner.png";
+import titleImage from "../assets/title.svg";
 import { Image } from "astro:assets";
 import { ClientRouter } from "astro:transitions";
 import { profileConfig } from "../config";
@@ -42,11 +43,12 @@ const id = Astro.props?.id;
       >
         <div class="flex justify-between items-center">
           <a href="/">
-            <img
-              src="/title.svg"
-              alt="title image"
-              decoding="async"
-              loading="lazy"
+            <Image
+              src={titleImage}
+              alt="Cryptobox Tech Blog"
+              width={182}
+              height={24}
+              loading="eager"
             />
           </a>
           <nav class="hidden sm:flex sm:justify-center">
@@ -75,6 +77,7 @@ const id = Astro.props?.id;
                       href={link.to}
                       target="_blank"
                       rel="noreferrer"
+                      aria-label={link.name}
                     >
                       <Icon name={link.icon} size="24" />
                     </a>
