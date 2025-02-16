@@ -41,6 +41,7 @@ export const MobileNav = () => {
           <ul>
             {siteConfig.menu.map((item, index) => (
               <li
+                key={item.to}
                 className={`text-slate-500 font-bold  ${index < siteConfig.menu.length - 1 && "border-b border-slate-300"}`}
               >
                 {item.isExternal ? (
