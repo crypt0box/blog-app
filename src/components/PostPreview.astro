@@ -1,0 +1,69 @@
+---
+import type { CollectionEntry } from "astro:content";
+import Twemoji from "./Twemoji.astro";
+import EmojiLabel from "./EmojiLabel.astro";
+import { format } from "date-fns";
+
+export interface Props {
+  post: CollectionEntry<"blog">;
+  blogLinkPrefix: string;
+  tagLinkPrefix: string;
+}
+const { post, blogLinkPrefix, tagLinkPrefix } = Astro.props;
+---
+
+<article class="w-full min-h-48 p-6 rounded-xl bg-slate-100">
+  <div class="sm:grid sm:grid-cols-[auto_240px] gap-2">
+    <div>
+      <a
+        href={`${blogLinkPrefix}${post.id}`}
+        class="sm:hidden flex justify-center items-center w-full h-full p-4 bg-slate-200 rounded-md"
+      >
+        <Twemoji class="w-16 h-16" emoji={post.data.heroImage} />
+      </a>
+      <h2 class="text-2xl font-bold mt-2 sm:mt-0">
+        <a class="hover:text-slate-500" href={`${blogLinkPrefix}${post.id}`}>
+          {post.data.title}
+        </a>
+      </h2>
+      <div class="flex gap-4 mt-2">
+        <EmojiLabel emoji="📅">
+          {format(post.data.pubDate, "yyyy-MM-dd")}
+        </EmojiLabel>
+        <EmojiLabel emoji="🔖">
+          <div class="flex gap-1">
+            {
+              post.data.tags.map((tag: string, index: number) => (
+                <>
+                  <a
+                    class="rounded-md px-1 hover:bg-slate-300"
+                    href={`${tagLinkPrefix}${tag}/`}
+                  >
+                    {tag}
+                  </a>
+                  {index !== post.data.tags.length - 1 && <span>/</span>}
+                </>
+              ))
+            }
+          </div>
+        </EmojiLabel>
+      </div>
+      <div class="mt-2 h-12 overflow-y-hidden">
+        <p class="text-slate-700">{post.data.description}</p>
+      </div>
+      <div class="mt-2">
+        <p class="text-slate-500 font-bold">
+          {post.body?.length} words | {
+            Math.round((post.body?.length ?? 0) / 600)
+          } min read
+        </p>
+      </div>
+    </div>
+    <a
+      href={`${blogLinkPrefix}${post.id}`}
+      class="hidden sm:flex justify-center items-center w-full h-full bg-slate-200 rounded-md"
+    >
+      <Twemoji class="w-16 h-16" emoji={post.data.heroImage} />
+    </a>
+  </div>
+</article>
