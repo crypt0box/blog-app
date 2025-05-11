@@ -1,0 +1,36 @@
+---
+import { getCollection } from "astro:content";
+import BaseLayout from "../layouts/BaseLayout.astro";
+import Profile from "../components/Profile.astro";
+import Tags from "../components/Tags.astro";
+import PostPreview from "../components/PostPreview.astro";
+import type { PaginateFunction } from "astro";
+import { PAGE_SIZE } from "../constants/common";
+
+const posts = (await getCollection("blog"))
+  .sort((a, b) => b.data.pubDate.getTime() - a.data.pubDate.getTime())
+  .slice(0, PAGE_SIZE);
+const uniqueTags = [...new Set(posts.map((post) => post.data.tags).flat())];
+---
+
+<BaseLayout title="Cryptobox Tech Blog">
+  <div class="sm:grid sm:grid-cols-[70%_1fr] sm:gap-4 my-4">
+    <div class="flex flex-col gap-4 mx-4 sm:mx-auto">
+      {
+        posts.map((post) => (
+          <PostPreview
+            post={post}
+            blogLinkPrefix="blog/"
+            tagLinkPrefix="tags/"
+          />
+        ))
+      }
+      <Tags class="sm:hidden flex" tags={uniqueTags} />
+      <Profile class="sm:hidden flex" />
+    </div>
+    <div>
+      <Profile class="hidden sm:flex" />
+      <Tags class="hidden sm:flex mt-4" tags={uniqueTags} />
+    </div>
+  </div>
+</BaseLayout>
