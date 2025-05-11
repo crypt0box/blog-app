@@ -4,7 +4,6 @@ import BaseLayout from "../layouts/BaseLayout.astro";
 import Profile from "../components/Profile.astro";
 import Tags from "../components/Tags.astro";
 import PostPreview from "../components/PostPreview.astro";
-import type { PaginateFunction } from "astro";
 import { PAGE_SIZE } from "../constants/common";
 
 const posts = (await getCollection("blog"))
