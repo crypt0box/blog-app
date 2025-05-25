@@ -1,0 +1,262 @@
+---
+title: "VibeCodingに必須の便利ツール「repomix」の紹介"
+description: "repomixはLLMに渡すためのコードコンテキストを１つのファイルにまとめてくれるツールです。"
+pubDate: "2025-05-25"
+heroImage: "🔍"
+tags:
+  - tool
+  - ai
+---
+
+## repomixとは
+
+[repomix](https://github.com/yamadashy/repomix)とはLLMに渡すためのコードコンテキストを１つのファイルにまとめてくれるツールです。[yamadashy (やまだし)](https://x.com/yamadashy)さんによって制作されており、[ご本人のZenn記事](https://zenn.dev/yamadashy/articles/ai-tool-repomix-5000-star)も公開されています。
+最近では[Open Source Awards 2025](https://osawards.com/javascript/)のPowered by AI部門にもノミネートされているホットなツールです。
+
+## なぜVibeCodingにrepomixを使うのか
+
+VibeCodingにおいて**実装計画**を作成するのは必須です。実装計画を作成せずに自ら実装の指示プロンプトを考えるのは骨が折れますし、ハルシネーションが起きやすく、本当にやってほしい実装から外れたコードを生成されることが多くあります。
+実際ClineではPlanモードという機能が実装されており、推論モデルにやりたい実装を計画させてから実装するフローが[推奨されています](https://docs.cline.bot/features/plan-and-act#plan-mode-think-first)。
+この実装計画の作成にあたっては**どれだけ質の高いコンテキストをLLMに与えられるか**が重要です。質の高いコンテキストとは、実装を行うための必要最低限な情報であり、必要以上の情報を与えすぎても、逆に少なすぎてもLLMはハルシネーションを起こしやすくなってしまいます。この**必要最低限な情報**をまとめるのにrepomixが効果を発揮してくれます。
+
+## repomixの使い方
+
+実際に使い方を知るとイメージしやすいので説明します。
+例として[自作のブログ](https://cryptobox.blog/)にページネーション機能を実装してみます。（テスト実装なのでデプロイはしません）
+下記画像の記事リンクの下にページネーションコンポーネントを配置するイメージです。
+![](https://storage.googleapis.com/zenn-user-upload/31335ec1f246-20250525.png)
+
+### インストール
+
+nodeがインストールされている環境なら以下コマンドですぐに使えます。
+
+```
+npx repomix
+```
+
+それ以外ならグローバル環境にインストールすることで使えるようになります。
+
+```
+# Install using npm
+npm install -g repomix
+
+# Alternatively using yarn
+yarn global add repomix
+
+# Alternatively using Homebrew (macOS/Linux)
+brew install repomix
+
+# Then run in any project directory
+repomix
+```
+
+### コンテキストをまとめる
+
+以下のコマンドを打ってコードの情報を１ファイルにまとめます。
+
+```
+repomix --include src/pages/index.astro,src/constants,package.json,
+```
+
+それぞれのファイルの概要は以下です。
+| ファイル | 概要 |
+| ---- | ---- |
+| src/pages/index.astro | ページネーション機能を実装したいファイル |
+| src/constants | ブログで使う定数ファイルを定義しているディレクトリ。１ページに表示する記事リンクの最大数をここで管理しているので指定 |
+| package.json | いわずもがな。指定しておくとエージェントが使っているパッケージマネージャーやライブラリを理解してくれるの便利 |
+
+すると`repomix-output.yml`というファイルが生成されます。中身は以下のようになっています。
+
+```
+This file is a merged representation of a subset of the codebase, containing specifically included files, combined into a single document by Repomix.
+
+<file_summary>
+This section contains a summary of this file.
+
+<purpose>
+This file contains a packed representation of the entire repository's contents.
+It is designed to be easily consumable by AI systems for analysis, code review,
+or other automated processes.
+</purpose>
+
+<file_format>
+The content is organized as follows:
+1. This summary section
+2. Repository information
+3. Directory structure
+4. Repository files (if enabled)
+5. Multiple file entries, each consisting of:
+  - File path as an attribute
+  - Full contents of the file
+</file_format>
+
+<usage_guidelines>
+- This file should be treated as read-only. Any changes should be made to the
+  original repository files, not this packed version.
+- When processing this file, use the file path to distinguish
+  between different files in the repository.
+- Be aware that this file may contain sensitive information. Handle it with
+  the same level of security as you would the original repository.
+</usage_guidelines>
+
+<notes>
+- Some files may have been excluded based on .gitignore rules and Repomix's configuration
+- Binary files are not included in this packed representation. Please refer to the Repository Structure section for a complete list of file paths, including binary files
+- Only files matching these patterns are included: src/pages/index.astro, package.json, src/constants
+- Files matching patterns in .gitignore are excluded
+- Files matching default ignore patterns are excluded
+- Files are sorted by Git change count (files with more changes are at the bottom)
+</notes>
+
+</file_summary>
+
+<directory_structure>
+package.json
+src/constants/common.ts
+src/pages/index.astro
+</directory_structure>
+
+<files>
+This section contains the contents of the repository's files.
+
+<file path="src/constants/common.ts">
+export const PAGE_SIZE = 2;
+</file>
+
+<file path="package.json">
+{
+  "name": "blog-app",
+  "type": "module",
+  "version": "0.0.1",
+  "scripts": {
+    "dev": "astro dev",
+    "start": "astro dev",
+    "build": "astro check && astro build",
+    "preview": "astro preview",
+    "astro": "astro",
+    "format": "prettier --write src/"
+
+// 以下略
+```
+
+好みの推論モデルにこれをコピペしてかつ、やりたいこと記述して実装計画を作成させます。今回はo3を使いました。
+
+```
+// repomix-output.ymlの中身をコピペ
+---
+src/pages/index.astroにページネーション機能を実装する計画書を作成して。ページネーションコンポーネントはshadcnのものを使ってPostPreviewの下に配置するようにして。
+またディレクトリ構成は以下なので参考にして
+---
+// tree -L 2 src した結果をコピペ
+```
+
+すると以下のような実装計画書を生成してくれました。
+
+```
+# **`src/pages/index.astro` ページネーション実装計画書**
+
+## 1. 目的
+
+* 投稿一覧ページにページネーションを導入し、**UX の向上**と**ビルドサイズの削減**を図る。
+* shadcn/ui のコンポーネントを用い、既存サイトの配色・トーン & マナーと統一する。
+
+---
+
+## 2. 現状整理
+
+| 項目     | 現状                                                           |
+| ------ | ------------------------------------------------------------ |
+| ルーティング | ルート `/` に `index.astro` が配置され、最新 2 件のみ表示 ( `PAGE_SIZE = 2` ) |
+| 一覧表示   | `<PostPreview>` をループで描画                                      |
+| スタイル   | Tailwind + shadcn/ui を混在利用 (色は Theme Token 依存)               |
+| データソース | `astro:content` の blog コレクション                                |
+
+---
+
+## 3. 要件
+
+1. **ページネーション機能**
+
+   * 1 ページあたりの表示件数を **8 件**に拡張 ( `PAGE_SIZE = 8` とする)。
+   * 2 ページ目以降は `/page/2`, `/page/3` … の静的ルートで配信。
+   * **SEO 対応**のため、`rel="canonical"` と `rel="prev|next"` を適切に出力。
+2. **UI コンポーネント**
+
+   * shadcn/ui の `<Pagination>` を流用し、`class="mt-8"` で `<PostPreview>` の直下に配置。
+   * カラーパレットは `text-primary` / `bg-secondary` など既存ユーティリティを使用して統一。
+3. **アクセシビリティ**
+
+   * ボタンは `aria-label` を設定。
+   * キーボードフォーカスリングを明示。
+4. **テスト**
+
+   * ページ数が正しく計算されるユニットテスト。
+   * ビルド後、`/page/Ｎ` がすべて生成される e2e テスト (Playwright)。
+
+---
+
+## 4. ディレクトリ／ファイル設計
+
+// 略
+
+---
+
+## 5. 実装ステップ
+
+// 略
+
+## 6. テスト／ビルド確認
+
+// 略
+
+---
+
+## 6. スケジュール (目安)
+
+// 略
+
+---
+
+## 7. 留意事項
+
+// 略
+
+---
+
+以上。
+
+```
+
+これをそのままCursorなりCopilotAgentなりお好みのエージェントに渡して、「上記の指示書に従って実装してください」と命令します。今回はCursorでモデルはClaude Sonnet 4を使用しました。
+
+:::message
+本来は生成された実装計画をさらにレビューして、間違った指示や余計なタスクが計画されていないか確認します。質の低い計画書だった場合、repomixに含めるファイルが足りていないか、指示内容が曖昧である可能性があるので、与えるコンテキストを修正し都度生成しなおしてクオリティを高めていきます。今回は説明用なのでスケジュールやテストといった不要な記述を削除したのみでエージェントに渡しています。
+:::
+
+すると以下のように想定通りにページネーションコンポーネントが配置され、機能も問題なく実装されました。
+
+![](https://storage.googleapis.com/zenn-user-upload/77e4d167939c-20250525.png)
+
+## 本当にrepomixは必要か
+
+しかし、わざわざrepomixを使わなくてもCursorやCopilotAgentの「Add Context」を使ってコンテキストを与え、ASKモードで実装計画を作らせればいいと思うかもしれません。自分もそう思って画像のようにコンテキストを与えて実装計画を作らせていたのですが、与えるコンテキストが多くなるにつれて、全てを読んでくれず無視される場面に多く遭遇しました。
+![](https://storage.googleapis.com/zenn-user-upload/c3e6e0304043-20250525.png)
+理由は不明ですが、ある一定規模以上の実装になると生成される計画書の質が目に見えて悪くなってしまったのです。一方repomixを使ってコンテキストを与えた場合は、読み飛ばしをされることがほとんどなく、質の高いアウトプットを出してくれることが多いです。
+
+また、repomixを使う利点は他にもあります。
+
+### モデル本来の力を使える
+
+例えばGemini 2.5 Proは100万トークンのコンテキストウィンドウに対応していますが、copilot上で使うと[64k程度に制限されており](https://github.com/microsoft/vscode-copilot-release/issues/8303)本来の力を発揮できません。repomixを使えばブラウザのgeminiを使えるため、フルで力を発揮させたうえで実装計画を作ることができます。
+
+### 最新のモデルがいち早く使える
+
+最新のモデルが発表されてからCursorやCopilot上で使えるようになるには、多少のタイムラグがあります。repomixを使えばIDEのアップデートを待たずとも、すぐにモデルを使うことができるので便利です。
+
+### 別リポジトリのコンテキストを与えることができる
+
+例えばOpenAPIのスキーマを記述しているアプリとは別のリポジトリの情報も与えつつ実装計画を作成したいときに、repomixで情報をまとめて渡せるので便利です。また、別リポジトリの一部のディレクトリの情報だけ渡すといった、LLMに渡すべきコンテキストを柔軟に取捨選択しつつ与えられる部分が気に入っています。
+
+## おわりに
+
+簡単な紹介になってしまい大変恐縮ですが、便利なのに周りで使っている方があまりいなかったため記事にしてみました。少しでも興味を持っていただけたなら幸いです。ぜひ使ってみてください。
