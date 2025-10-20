@@ -14,7 +14,13 @@ export async function getStaticPaths() {
 
 export async function GET({ params }: APIContext) {
   const post = await getEntry("blog", params.id as Props["id"]);
-  const body = await getOgImage(post?.data.title ?? "No title");
+  const buf = await getOgImage(post?.data.title ?? "No title");
+  const bytes = new Uint8Array(buf);
 
-  return new Response(body);
+  return new Response(bytes, {
+    headers: {
+      "Content-Type": "image/png",
+      "Cache-Control": "public, max-age=3600",
+    },
+  });
 }
