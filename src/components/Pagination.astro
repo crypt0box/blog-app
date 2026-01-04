@@ -1,0 +1,79 @@
+---
+import { MAX_VISIBLE } from "../consts";
+
+interface Props {
+  page: {
+    currentPage: number;
+    lastPage: number;
+    url: { prev?: string; next?: string };
+  };
+}
+
+const { page } = Astro.props;
+const { currentPage, lastPage } = page;
+
+let start = Math.max(1, currentPage - Math.floor(MAX_VISIBLE / 2));
+let end = Math.min(lastPage, start + MAX_VISIBLE - 1);
+if (end - start + 1 < MAX_VISIBLE) {
+  start = Math.max(1, end - MAX_VISIBLE + 1);
+}
+const pageNumbers = Array.from(
+  { length: end - start + 1 },
+  (_, i) => start + i,
+);
+
+const getPageUrl = (num: number) => (num === 1 ? "/" : `/page/${num}`);
+---
+
+{
+  lastPage > 1 && (
+    <nav
+      class="flex justify-center items-center gap-2 my-8"
+      aria-label="ページナビゲーション"
+    >
+      {page.url.prev ? (
+        <a
+          href={page.url.prev}
+          class="px-3 py-2 rounded-md bg-slate-100 hover:bg-slate-300 transition-colors"
+          aria-label="前のページ"
+        >
+          ←
+        </a>
+      ) : (
+        <span class="px-3 py-2 rounded-md bg-slate-100 text-slate-400 cursor-not-allowed">
+          ←
+        </span>
+      )}
+
+      {pageNumbers.map((num) => (
+        <a
+          href={getPageUrl(num)}
+          class:list={[
+            "px-3 py-2 rounded-md transition-colors",
+            num === currentPage
+              ? "bg-slate-700 text-white font-bold"
+              : "bg-slate-100 hover:bg-slate-300",
+          ]}
+          aria-label={`ページ ${num}`}
+          aria-current={num === currentPage ? "page" : undefined}
+        >
+          {num}
+        </a>
+      ))}
+
+      {page.url.next ? (
+        <a
+          href={page.url.next}
+          class="px-3 py-2 rounded-md bg-slate-100 hover:bg-slate-300 transition-colors"
+          aria-label="次のページ"
+        >
+          →
+        </a>
+      ) : (
+        <span class="px-3 py-2 rounded-md bg-slate-100 text-slate-400 cursor-not-allowed">
+          →
+        </span>
+      )}
+    </nav>
+  )
+}

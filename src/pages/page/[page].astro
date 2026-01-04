@@ -1,0 +1,58 @@
+---
+import { getCollection } from "astro:content";
+import type { GetStaticPaths } from "astro";
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import Profile from "../../components/Profile.astro";
+import Tags from "../../components/Tags.astro";
+import PostPreview from "../../components/PostPreview.astro";
+import Pagination from "../../components/Pagination.astro";
+
+export const getStaticPaths = (async ({ paginate }) => {
+  const posts = (await getCollection("blog")).sort(
+    (a, b) => b.data.pubDate.getTime() - a.data.pubDate.getTime(),
+  );
+  return paginate(posts, { pageSize: 3 });
+}) satisfies GetStaticPaths;
+
+const { page } = Astro.props;
+
+// 1ページ目はトップページへリダイレクト
+if (page.currentPage === 1) {
+  return Astro.redirect("/");
+}
+
+const allPosts = await getCollection("blog");
+const uniqueTags = [...new Set(allPosts.map((post) => post.data.tags).flat())];
+
+// URLを調整（/page/1 → / に）
+const adjustedPage = {
+  ...page,
+  url: {
+    prev: page.currentPage === 2 ? "/" : `/page/${page.currentPage - 1}`,
+    next: page.url.next ? `/page/${page.currentPage + 1}` : undefined,
+  },
+};
+---
+
+<BaseLayout title={`Cryptobox Tech Blog - Page ${page.currentPage}`}>
+  <div class="sm:grid sm:grid-cols-[70%_1fr] sm:gap-4 my-4">
+    <div class="flex flex-col gap-4 mx-4 sm:mx-auto">
+      {
+        page.data.map((post) => (
+          <PostPreview
+            post={post}
+            blogLinkPrefix="/blog/"
+            tagLinkPrefix="/tags/"
+          />
+        ))
+      }
+      <Pagination page={adjustedPage} />
+      <Tags class="sm:hidden flex" tags={uniqueTags} />
+      <Profile class="sm:hidden flex" />
+    </div>
+    <div>
+      <Profile class="hidden sm:flex" />
+      <Tags class="hidden sm:flex mt-4" tags={uniqueTags} />
+    </div>
+  </div>
+</BaseLayout>
