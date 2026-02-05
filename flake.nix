@@ -28,6 +28,7 @@
           buildInputs = [
             # Stable packages
             stablePackages.nodejs_24
+            stablePackages.pnpm_10
           ];
 
           shellHook = ''

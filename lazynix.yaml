@@ -3,6 +3,7 @@ devShell:
   package:
     stable:
       - nodejs_24
+      - pnpm_10
     unstable: []
   shellHook:
     - "echo Welcome to LazyNix DevShell!"
