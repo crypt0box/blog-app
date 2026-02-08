@@ -1,0 +1,215 @@
+---
+title: "Async Reactとは何か"
+description: "React Conf 2025の講演「Async React」をもとに、アプリを“デフォルトで非同期”とみなしてUIを組み立てる考え方を紹介しました。Sync Reactで起きがちなちらつきや過剰なローディングは、性能不足ではなく状態の“調整”の問題として捉え直し、Transitions/Suspense/useOptimistic/ViewTransitionsでbusy・loading・doneを埋めて滑らかな体験を実現します。一方でAPIの手動組み合わせは複雑になりがちなため、今後はルーターやデータ取得、コンポーネントライブラリ側で宣言的に抽象化していく流れにも注目です。"
+pubDate: "2026-02-08"
+heroImage: "❓"
+tags:
+  - react
+---
+
+React Conf 2025でAsync Reactというタイトルの講演が行われました。
+https://www.youtube.com/watch?v=B_2E96URooA
+
+自分はこの動画を見るまでAsync Reactという言葉自体聞いたことがなかったのですが、一通り見終えたところでこの先React開発チームが目指していきたい未来を感じることができたので、この記事で紹介したいと思います。
+
+## TL;DR
+- Async Reactとはアプリケーションをデフォルトで非同期とみなして構築する考え方である。
+  - await UI = await f(await state)
+- Async Reactにより更なるUXの最適化を実現する
+  - 画面のチラつきや、要素が突然ポップインするといった不快な挙動を排除
+- 実現のために数々のAPIを必要とする
+  - Transitions, Suspense, useOptimistic, ViewTransitions
+- これらのAPIを手動で組み合わせていくのはstateの増加など過度な複雑性を持ち込むので、Reactコミュニティと強調して抽象化していく
+
+## デモ
+Async Reactのデモサイトが公開されているのでぜひ触ってみてください。
+https://async-react.dev/
+
+デモサイトのコードも公開されています。
+https://github.com/rickhanlonii/async-react
+
+ポイントは以下です。
+- 高速ネットワークの場合はユーザーはアプリケーションが同期的に動作しているように感じる
+- 低速ネットワークの場合はユーザーが行ったアクションに対して、楽観的更新による即座のフィードバックと、UIの遅延読み込みやアニメーションを使った滑らかな操作体験を実現している
+
+## Sync Reactの問題点
+Async Reactの公演ではAsync Reactの対比として、昨今のReactで構築されたアプリケーションを**Sync React**と呼んでいます。ではSync Reactの問題点とはなんでしょう？実際に触ってみるとわかりやすいと思うので、Async ReactのデモサイトからTransitions, Suspense, useOptimistic, ViewTransitionsを削除したバージョンを用意しました。２つのデモを触って比べてみるとより理解が進むと思います。
+
+https://github.com/crypt0box/sync-react#
+
+サーバーを立ち上げるのが面倒な方向けに、ここでは問題をいくつかピックアップして紹介します。
+
+### ちらつき
+よくある問題が画面のちらつきです。Reactで構築したアプリケーションは一般的には画面遷移→ローディング→データ表示の流れを辿ります。しかし、インターネット回線が高速だとローディングが一瞬で終わるため、画面上ではチラついて見えてしまいます。
+
+![](https://storage.googleapis.com/zenn-user-upload/d7f4201780e5-20260208.webp)
+
+また、ユーザー操作によるデータの更新時にDBと画面の状態の同期をとるために再度データを取得する処理を走らせることがよくありますが、その際にもちらつきが発生しやすいです。
+
+![](https://storage.googleapis.com/zenn-user-upload/c7034b9b6763-20260208.webp)
+
+### 過剰なローディングフィードバック
+TODOリストでタスクの完了状態を変更した時など、本来変更したタスクのみローディング状態となればいいものの、変更していないタスクも同時にローディング状態になってしまうという問題があります。
+
+## Async Reactによる解決
+Reactチームはこれらを**パフォーマンスの問題**ではなく**調整（Coordination）の問題**だと結論づけています。いくらパフォーマンスを向上させたところで、UIをうまく調整していなければちらつきや過剰なフィードバックの問題を解決することはできません。そこであらゆる状態を非同期とみなすことでこれらの問題に対処します。
+
+Reactはコンポーネントの描画までにEvent→Update→Render→Commitという処理を辿ります。アプリケーションが真に同期的、つまりJavaScriptのロードが瞬時に完了し、ネットワークを介さないものであればちらつきなどの問題は起こりません。
+![](https://storage.googleapis.com/zenn-user-upload/599577a2981c-20260208.png)
+
+しかし現実は違います。現実のアプリはほとんどネットワークを介するし、JavaScriptのロードにも時間がかかります。つまり、Event→Update→Render→Commitの間に非同期の状態が存在するのです。
+![](https://storage.googleapis.com/zenn-user-upload/42fe1b2a0cfd-20260208.png)
+
+この間の処理を動画では以下のように呼んでいます。
+
+- **busy**: EventとUpdateの間
+  - ユーザーの操作からBEにリクエストが送信されるまでの期間
+- **loading**: UpdateとRenderの間
+  - リクエストが送信されレスポンスが返ってくるまでの期間
+- **done**: RenderとCommitの間
+  - レスポンスが返ってきてから画面が描画されるまでの期間
+
+これらbusy, loading, doneの状態を埋めるのがuseOptimistic, Suspense, ViewTransitionsです。
+
+![](https://storage.googleapis.com/zenn-user-upload/8b74dbf294e5-20260208.png)
+
+transitionは全ての前提となります。
+
+これらのReactがHooksのパラダイム以降に培ってきたAPIを駆使することで、ネットワークやJavaScriptの読み込み時間を強く意識することのない、滑らかな動作をユーザーにフィードバックできます。
+
+![](https://storage.googleapis.com/zenn-user-upload/a6d7b40f7d8f-20260208.webp)
+
+### コード例
+
+具体的なコードがどうなっているか、デモサイトを例に取って見ていきます。
+
+まずレッスン一覧を表示するコンポーネント部分は`<Suspense />`で囲われています。これによりレッスン一覧をfetchしている間の状態をfallbackコンポーネントでフィードバックできます。
+
+```tsx
+// src/app/Home.jsx
+
+<Suspense fallback={<Design.FallbackList />}>
+  <LessonList
+    tab={tab}
+    search={search}
+    completeAction={completeAction}
+  />
+</Suspense>
+```
+
+`LessonList`コンポーネントの中身を見ていきます。特筆すべきはこちらでしょうか。
+
+```tsx
+// src/app/Home.jsx
+
+<ViewTransition key="results" default="none" enter="auto" exit="auto"> // ①
+  <Design.List>
+    {lessons.map((item) => (
+      /**
+       * This ViewTransition will animate unique items in the list.
+       * For example, when searching, existing items will "move" to
+       * their new positions, and new items will fade in. Items that
+       * are no longer in the list will fade out.
+       */
+      <ViewTransition key={item.id}> // ②
+        <div>
+          <ViewTransition default="none"> // ③
+            <Lesson
+              id={item.id}
+              item={item}
+              completeAction={completeAction}
+            />
+          </ViewTransition>
+        </div>
+      </ViewTransition>
+    ))}
+  </Design.List>
+</ViewTransition>
+```
+
+これでもかというくらい`<ViewTransition />`コンポーネントで囲われています。①の`<ViewTransition />`はデータが存在する場合としない場合の画面を滑らかに切り替えるため、②は検索したときにデータが切り替わる際の表示を滑らかにするために配置されています。③はボタンに完了マークがつく時のアニメーションを発火させないようにしているようなのですが、正直あってもなくても見た目の影響は少なそうでした。
+
+さらに`Lesson`コンポーネントの中を見ていきます。
+
+```tsx
+// src/app/Home.jsx
+
+function Lesson({ item, completeAction }) {
+  async function action() {
+    await completeAction(item.id);
+  }
+  return (
+    <Design.LessonCard item={item}>
+      {/* 
+          Design.CompleteButton is using the action prop pattern to automatically
+          update the completed state while the action is pending. If the action to
+          toggle complete takes longer than 150ms, it automatically shows a loading
+          state on the button, so the user knows their action is being processed.
+      */}
+      <Design.CompleteButton
+        complete={item.complete}
+        action={action}
+      ></Design.CompleteButton>
+    </Design.LessonCard>
+  );
+}
+```
+
+`<Design.CompleteButton />`に`action`を渡しています。これは[action prop pattern](https://react.dev/reference/react/useTransition#exposing-action-props-from-components)と呼ばれるもので、これによりJavaScriptの読み込みがUIの描画をブロックしないようになっています。
+
+さらに`<Design.CompleteButton />`の中身を見ていきます。
+
+```tsx
+// src/design/CompleteButton.jsx
+
+export default function CompleteButton({ complete, action }) {
+  const [optimisticComplete, setOptimisticComplete] = useOptimistic(complete);
+
+  function clickAction() {
+    startTransition(async () => {
+      setOptimisticComplete(!optimisticComplete);
+      await action();
+    });
+  }
+
+  return (
+    <PendingButton action={clickAction}>
+      {optimisticComplete ? (
+        <CircleCheckBig
+          className={cn({ "text-chart-2": optimisticComplete })}
+          size={48}
+        />
+      ) : (
+        <div></div>
+      )}
+    </PendingButton>
+  );
+}
+```
+
+`clickAction`内のaction prop patternに加え`useOptimistic`を使った楽観的更新も行なっています。これによりユーザーの操作を即座にUIに反映させるようになっています。
+
+### 現状のAsync Reactの問題点
+具体的なコードを見てもわかるようにAsync Reactはすでに実現できる手段が整っています。しかし、細かくコンポーネントを`<ViewTransition />`で囲い、UIコンポーネントには`useOptimistic`とaction prop patternを実装し...などどしていくのは開発体験が悪いです。現在Reactチームは**宣言的なコードを書くだけで、非同期処理が自動的に調整される世界**を目指してReactコミュニティと協調していくようです。具体的には以下3つのレイヤーとAsync Reactとの統合を目指すとのことです。
+
+- **コンポーネントライブラリ**
+  - action propsとuseOptimisticをデフォルトで組み込み
+- **ルーター**
+  - デフォルトで非同期。ページ遷移やフィルタを自動的にトランジションとして扱う
+- **データフェッチング・ライブラリ**
+  - デフォルトでSuspenseに対応
+ 
+![](https://storage.googleapis.com/zenn-user-upload/8c634b6f18be-20260208.png)
+
+それに伴い**Async React Working Group**が設立されています。このグループを通じてライブラリ制作者の支援やAsync Reactの教育と普及を行なっていくそうです。
+
+https://github.com/reactwg/async-react
+
+## おわりに
+筆者はReact開発チームは常にUXの向上に向き合い続けていると考えています。これまではUXの向上のためにパフォーマンスを問題と捉え、SuspenseやRSCを組み込み、LCP,INP,CLSを改善する手段を提供し続けてきました。
+
+しかしパフォーマンス改善にも限界があります。ユーザーの環境は様々で、回線速度や端末性能にも差があります。どれだけ最適化しても、ネットワーク待ちやJS実行時間がゼロになるわけではありません。つまり、パフォーマンス改善だけでは取り切れない体験の悪さが必ず生じてしまいます。
+
+そこで問題をパフォーマンスから調整（Coordination）にシフトすることで、ちらつきなどの体験の悪さを改善していく方向に舵を切っています。
+
+個人的にはこの方向性は納得できるものであり、UXの向上を第一に考えるReact開発チームの一貫性を感じました。昨今は様々な思想のもとUIライブラリやフレームワークが乱立するとても面白い時代ですが、今後もReactの動向に注目したいです。
