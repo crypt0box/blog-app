@@ -11,6 +11,7 @@
     "format": "prettier --write src/"
   },
   "dependencies": {
+    "@astrojs/compiler-rs": "^0.1.8",
     "@astrojs/mdx": "^5.0.3",
     "@astrojs/react": "5.0.3",
     "@astrojs/rss": "^4.0.18",
