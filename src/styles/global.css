@@ -1,3 +1,7 @@
+@import "tailwindcss";
+@plugin "@tailwindcss/typography";
+@import "tw-animate-css";
+
 html:has(dialog[open]) {
   overflow: hidden;
 }
