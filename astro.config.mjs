@@ -11,11 +11,12 @@ import icon from "astro-icon";
 
 import remarkDirective from "remark-directive";
 import remarkContainerDirectives from "./src/plugins/remarkMessage";
+import remarkYouTubeEmbed from "./src/plugins/remarkYouTubeEmbed";
 // https://astro.build/config
 export default defineConfig({
   site: "https://cryptoboxme.com",
   integrations: [mdx(), sitemap(), react(), tailwind(), icon()],
   markdown: {
-    remarkPlugins: [remarkDirective, remarkContainerDirectives],
+    remarkPlugins: [remarkDirective, remarkContainerDirectives, remarkYouTubeEmbed],
   },
 });
