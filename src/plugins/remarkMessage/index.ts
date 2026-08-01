@@ -47,16 +47,14 @@ export default function remarkContainerDirectives() {
         node.data = {
           hName: "aside",
           hProperties: {
-            className:
-              "flex items-start p-4 bg-amber-100 text-white rounded-md",
+            className: "flex items-start p-4 bg-amber-100 text-white rounded-md",
           },
           hChildren: [
             {
               type: "element",
               tagName: "span",
               properties: {
-                className:
-                  "min-w-8 min-h-8 mr-2 text-center bg-amber-400 rounded-full",
+                className: "min-w-8 min-h-8 mr-2 text-center bg-amber-400 rounded-full",
               },
               children: [{ type: "text", value: "!" }],
             },

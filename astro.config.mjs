@@ -8,7 +8,7 @@ import react from "@astrojs/react";
 import tailwindcss from "@tailwindcss/vite";
 
 import icon from "astro-icon";
-import { defineConfig } from 'astro/config';
+import { defineConfig } from "astro/config";
 import remarkDirective from "remark-directive";
 import remarkContainerDirectives from "./src/plugins/remarkMessage";
 import remarkYouTubeEmbed from "./src/plugins/remarkYouTubeEmbed";
@@ -25,5 +25,5 @@ export default defineConfig({
   },
   experimental: {
     rustCompiler: true,
-  }
+  },
 });

@@ -67,12 +67,7 @@ async function run() {
 
     // ベンチマークを実行---③
     for (let i = 0; i < cases.length; i += 1) {
-      const stats = await runMeasures(
-        browser,
-        cases[i].name,
-        cases[i].path,
-        baseline,
-      );
+      const stats = await runMeasures(browser, cases[i].name, cases[i].path, baseline);
 
       if (i === 1) {
         baseline = stats;

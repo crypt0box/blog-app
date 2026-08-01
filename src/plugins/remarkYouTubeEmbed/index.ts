@@ -79,11 +79,7 @@ function splitParagraph(paragraph: Paragraph): RootContent[] | null {
   let foundEmbed = false;
 
   const flushBuffer = () => {
-    while (
-      buffer.length > 0 &&
-      buffer[0].type === "text" &&
-      buffer[0].value === ""
-    ) {
+    while (buffer.length > 0 && buffer[0].type === "text" && buffer[0].value === "") {
       buffer.shift();
     }
     while (
@@ -111,11 +107,8 @@ function splitParagraph(paragraph: Paragraph): RootContent[] | null {
 
     const prev = buffer[buffer.length - 1];
     const next = children[i + 1];
-    const prevOk =
-      !prev ||
-      (prev.type === "text" && prev.value.endsWith("\n"));
-    const nextOk =
-      !next || (next.type === "text" && next.value.startsWith("\n"));
+    const prevOk = !prev || (prev.type === "text" && prev.value.endsWith("\n"));
+    const nextOk = !next || (next.type === "text" && next.value.startsWith("\n"));
 
     if (!prevOk || !nextOk) {
       buffer.push(child);

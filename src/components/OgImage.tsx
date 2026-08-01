@@ -4,10 +4,9 @@ import sharp from "sharp";
 
 const path = import.meta.env.MODE === "production" ? "" : "public/";
 
-const imgBase64 = readFileSync(
-  new URL(`../../${path}og-image-background.png`, import.meta.url),
-  { encoding: "base64" },
-);
+const imgBase64 = readFileSync(new URL(`../../${path}og-image-background.png`, import.meta.url), {
+  encoding: "base64",
+});
 const imgDataUrl = `data:image/png;base64,${imgBase64}`;
 
 export async function getOgImage(text: string) {
@@ -55,9 +54,7 @@ async function getFontData() {
     })
   ).text();
 
-  const resource = css.match(
-    /src: url\((.+)\) format\('(opentype|truetype)'\)/,
-  );
+  const resource = css.match(/src: url\((.+)\) format\('(opentype|truetype)'\)/);
 
   if (!resource) return;
 
